@@ -3,11 +3,41 @@
 [![License: Apache-2.0](https://img.shields.io/badge/License-Apache--2.0-blue.svg)](https://github.com/xueshui/totpscan/blob/main/LICENSE)
 [![Issues](https://img.shields.io/badge/issues-GitHub-black.svg)](https://github.com/xueshui/totpscan/issues)
 
+<p align="center">
+  <img src="docs/assets/zh/banner.svg" alt="totpscan：扫到的二维码只用来核对地址，动态码只发往绑定时钉住的地址" width="100%">
+</p>
+
 在标准 TOTP（RFC 6238）之上，把「扫码」限定为一次地址核对：绑定阶段把提交地址（域名 + 路径）钉在客户端本地，登录扫码时只有二维码里的地址与本地记录**完全一致**才计算并提交动态码。
 
 > 二维码只用于比对。提交目标永远来自绑定阶段保存在本地的地址，而不是二维码里写的地址。
 
 **English summary** — `totpscan` is a TOTP anti-phishing add-on: during binding, the client stores the issuer's submit origin (host + path) locally; during login, a scanned QR is only used to compare against that pinned origin. If it does not match exactly, the client stops locally and sends nothing. It is **not** WebAuthn, **not** OAuth/QR sign-in, and does not protect against key leakage or a compromised server.
+
+<details>
+<summary>English overview · visuals</summary>
+
+<p align="center">
+  <img src="docs/assets/en/banner.svg" alt="totpscan: the scanned QR code is only a check; codes are submitted only to the address pinned at binding" width="100%">
+</p>
+
+![Workflow: binding pins dom and path; sign-in posts only to that endpoint](docs/assets/en/workflow.svg)
+
+![Six targets: protocol, reference server, browser extension, Android, iOS and HarmonyOS](docs/assets/en/platforms.svg)
+
+<table>
+  <tr>
+    <td width="50%"><img src="docs/assets/en/ui-android.svg" alt="Android accounts and scanner mockup"></td>
+    <td width="50%"><img src="docs/assets/en/ui-ios.svg" alt="iOS accounts and scanner mockup"></td>
+  </tr>
+  <tr>
+    <td width="50%"><img src="docs/assets/en/ui-harmony.svg" alt="HarmonyOS accounts and scanner mockup"></td>
+    <td width="50%"><img src="docs/assets/en/ui-extension.svg" alt="Extension popup and on-page scan mockup"></td>
+  </tr>
+</table>
+
+> These are illustrative mockups, not actual screenshots. Real builds may differ.
+
+</details>
 
 ## 项目定位
 
@@ -26,7 +56,11 @@
 
 字段、地址规范化规则、错误码与测试用例以 [`spec/`](spec/) 为唯一来源。
 
+![工作流程：绑定阶段钉住 dom 与 path，登录时只向该地址提交动态码](docs/assets/zh/workflow.svg)
+
 ## 六端在哪
+
+![六端能力总览：协议、参考服务端、浏览器扩展、Android、iOS、鸿蒙](docs/assets/zh/platforms.svg)
 
 | 端 | 目录 | 形态 | 当前状态 |
 | --- | --- | --- | --- |
@@ -38,6 +72,21 @@
 | 鸿蒙 | [`harmony/`](harmony/) | ArkTS App + HAR | 仅源码，未在 DevEco 构建 |
 
 接入文档在 [`docs/`](docs/)：[语言无关接入指南](docs/integration-guide.md)；Go 最小示例见 [`docs/examples/go`](docs/examples/go)。
+
+## 界面示意
+
+<table>
+  <tr>
+    <td width="50%"><img src="docs/assets/zh/ui-android.svg" alt="Android 账户列表与扫码页示意"></td>
+    <td width="50%"><img src="docs/assets/zh/ui-ios.svg" alt="iOS 账户列表与扫码页示意"></td>
+  </tr>
+  <tr>
+    <td width="50%"><img src="docs/assets/zh/ui-harmony.svg" alt="鸿蒙账户列表与扫码页示意"></td>
+    <td width="50%"><img src="docs/assets/zh/ui-extension.svg" alt="浏览器扩展弹窗与页内扫码示意"></td>
+  </tr>
+</table>
+
+> 上图为示意渲染，非真实截图；实际界面以各端构建为准。
 
 ## 最小可跑示例
 
