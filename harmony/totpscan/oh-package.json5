@@ -1,0 +1,12 @@
+{
+  "name": "totpscan",
+  "version": "1.0.0",
+  "description": "TOTPSCAN/v1 协议与标准 TOTP 的鸿蒙 SDK（HAR）",
+  "main": "Index.ets",
+  "author": "",
+  "license": "Apache-2.0",
+  "dependencies": {},
+  "devDependencies": {
+    "@ohos/hypium": "1.0.19"
+  }
+}

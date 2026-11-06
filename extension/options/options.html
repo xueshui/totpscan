@@ -1,0 +1,282 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title data-i18n="options_page_title"></title>
+    <link rel="stylesheet" href="../common/base.css" />
+    <link rel="stylesheet" href="options.css" />
+  </head>
+  <body>
+    <header class="page-header">
+      <div class="page-shell header-inner">
+        <div class="page-brand">
+          <div class="page-logo" aria-hidden="true">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+              <path d="m9 12 2 2 4-4" />
+            </svg>
+          </div>
+          <div>
+            <h1 data-i18n="extName"></h1>
+            <p data-i18n="options_brand_sub"></p>
+          </div>
+          <span class="version-tag" data-i18n="options_local_mode"></span>
+        </div>
+        <nav class="tabs" role="tablist" data-i18n-aria-label="options_tabs_aria">
+          <button class="tab is-active" type="button" data-tab="accounts" role="tab" aria-selected="true" data-i18n="options_tab_accounts"></button>
+          <button class="tab" type="button" data-tab="appearance" role="tab" aria-selected="false" data-i18n="options_tab_appearance"></button>
+          <button class="tab" type="button" data-tab="backup" role="tab" aria-selected="false" data-i18n="options_tab_backup"></button>
+          <button class="tab" type="button" data-tab="security" role="tab" aria-selected="false" data-i18n="options_tab_security"></button>
+        </nav>
+      </div>
+    </header>
+
+    <main class="page-shell page-body">
+      <section class="tab-panel is-active" id="panel-accounts" role="tabpanel">
+        <div class="section-head">
+          <div>
+            <h2 data-i18n="options_accounts_title"></h2>
+            <p data-i18n="options_accounts_sub"></p>
+          </div>
+          <div class="head-actions">
+            <button class="btn btn-secondary btn-sm" id="addUriButton" type="button" data-i18n="options_add_uri"></button>
+            <button class="btn btn-primary btn-sm" id="addManualButton" type="button" data-i18n="options_add_manual"></button>
+          </div>
+        </div>
+        <div id="accountsContainer" class="accounts-container">
+          <div class="loading-row"><div class="spinner"></div><span data-i18n="common_loading_accounts"></span></div>
+        </div>
+        <div class="notice notice-accent scan-bind-tip" id="scanBindTip">
+          <span class="tip-icon" aria-hidden="true">+</span>
+          <span data-i18n="options_bind_tip"></span>
+        </div>
+      </section>
+
+      <section class="tab-panel" id="panel-appearance" role="tabpanel" hidden>
+        <div class="section-head">
+          <div>
+            <h2 data-i18n="options_appearance_title"></h2>
+            <p data-i18n="options_appearance_sub"></p>
+          </div>
+        </div>
+        <div class="appearance-grid">
+          <div class="panel appearance-panel">
+            <div class="group">
+              <h3 data-i18n="options_theme_color"></h3>
+              <div class="swatches" id="swatches"></div>
+              <div class="custom-color-row">
+                <label class="color-picker-label" for="customColor">
+                  <input type="color" id="customColor" value="#2F6FED" data-i18n-aria-label="options_custom_color" />
+                  <span data-i18n="options_custom_color"></span>
+                </label>
+                <input class="input hex-input" id="customHex" maxlength="7" placeholder="#2F6FED" spellcheck="false" />
+                <button class="btn btn-secondary btn-sm" id="applyCustomColor" type="button" data-i18n="options_apply"></button>
+              </div>
+              <div class="hint" id="themeHint"></div>
+            </div>
+            <hr class="divider" />
+            <div class="group">
+              <h3 data-i18n="options_mode_title"></h3>
+              <div class="segmented" id="modeSegmented" role="radiogroup" data-i18n-aria-label="options_mode_title">
+                <button type="button" data-mode="auto" role="radio" data-i18n="theme_mode_auto"></button>
+                <button type="button" data-mode="light" role="radio" data-i18n="theme_mode_light"></button>
+                <button type="button" data-mode="dark" role="radio" data-i18n="theme_mode_dark"></button>
+              </div>
+              <div class="hint" id="modeHint"></div>
+            </div>
+            <hr class="divider" />
+            <div class="group">
+              <h3 data-i18n="options_language_title"></h3>
+              <div class="custom-color-row">
+                <select class="input" id="languageSelect" data-i18n-aria-label="options_language_title"></select>
+              </div>
+              <div class="hint" id="languageHint"></div>
+            </div>
+          </div>
+          <div class="preview-column">
+            <div class="preview-label" data-i18n="options_preview"></div>
+            <div class="preview-card">
+              <div class="preview-meta">
+                <div class="preview-avatar" data-i18n="options_preview_avatar"></div>
+                <div class="preview-name">
+                  <strong data-i18n="options_preview_issuer"></strong>
+                  <span>demo@example.com</span>
+                </div>
+                <div class="preview-ring">28</div>
+              </div>
+              <div class="preview-code" id="previewCode">659 343</div>
+              <div class="preview-foot" data-i18n="options_preview_foot"></div>
+            </div>
+            <div class="hint preview-note" data-i18n="options_preview_note"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="tab-panel" id="panel-backup" role="tabpanel" hidden>
+        <div class="section-head">
+          <div>
+            <h2 data-i18n="options_backup_title"></h2>
+            <p data-i18n="options_backup_sub"></p>
+          </div>
+        </div>
+
+        <div class="notice notice-warning backup-warning">
+          <span aria-hidden="true">⚠</span>
+          <span id="backupScanWarning"></span>
+        </div>
+
+        <div class="export-grid">
+          <div class="panel export-card">
+            <div class="export-icon">JSON</div>
+            <h3 data-i18n="options_export_json_title"></h3>
+            <p data-i18n="options_export_json_text"></p>
+            <div class="export-tags"><span class="badge badge-warning" data-i18n="options_badge_has_secret"></span></div>
+            <button class="btn btn-secondary btn-block" id="exportJsonButton" type="button" data-i18n="options_export_json_action"></button>
+          </div>
+          <div class="panel export-card">
+            <div class="export-icon">AES</div>
+            <h3 data-i18n="options_export_encrypted_title"></h3>
+            <p data-i18n="options_export_encrypted_text"></p>
+            <div class="export-tags"><span class="badge badge-accent" data-i18n="options_badge_needs_password"></span></div>
+            <button class="btn btn-primary btn-block" id="exportEncryptedButton" type="button" data-i18n="options_export_encrypted_action"></button>
+          </div>
+          <div class="panel export-card">
+            <div class="export-icon">TXT</div>
+            <h3 data-i18n="options_export_text_title"></h3>
+            <p data-i18n="options_export_text_text"></p>
+            <div class="export-tags"><span class="badge badge-muted" data-i18n="options_badge_standard_only"></span></div>
+            <button class="btn btn-secondary btn-block" id="exportTextButton" type="button" data-i18n="options_export_text_action"></button>
+          </div>
+        </div>
+
+        <div class="panel import-panel">
+          <div class="import-head">
+            <div>
+              <h3 data-i18n="options_import_title"></h3>
+              <p data-i18n="options_import_text"></p>
+            </div>
+          </div>
+          <div class="dropzone" id="dropzone">
+            <input type="file" id="fileInput" accept=".json,.txt,.csv,text/plain,application/json" hidden />
+            <div class="dropzone-icon" aria-hidden="true">⇧</div>
+            <div class="dropzone-text">
+              <strong data-i18n="options_drop_title"></strong>
+              <span><span data-i18n="options_drop_or"></span> <button class="link-button" id="chooseFileButton" type="button" data-i18n="options_choose_file"></button><span data-i18n="options_drop_hint"></span></span>
+            </div>
+          </div>
+          <textarea class="textarea import-textarea" id="importText" data-i18n-placeholder="options_import_placeholder" spellcheck="false"></textarea>
+          <div class="import-actions">
+            <button class="btn btn-secondary btn-sm" id="clearImportButton" type="button" data-i18n="options_clear"></button>
+            <button class="btn btn-primary btn-sm" id="previewImportButton" type="button" data-i18n="options_parse_preview"></button>
+          </div>
+
+          <div class="import-preview" id="importPreview" hidden>
+            <div class="preview-head">
+              <div>
+                <h4 data-i18n="options_preview_head"></h4>
+                <p id="importSummary"></p>
+              </div>
+              <button class="btn btn-ghost btn-sm" id="closePreviewButton" type="button" data-i18n="options_collapse"></button>
+            </div>
+            <div class="dup-row">
+              <span class="dup-label" data-i18n="options_dup_label"></span>
+              <label><input type="radio" name="dupStrategy" value="skip" checked /> <span data-i18n="options_dup_skip"></span></label>
+              <label><input type="radio" name="dupStrategy" value="overwrite" /> <span data-i18n="options_dup_overwrite"></span></label>
+              <label><input type="radio" name="dupStrategy" value="keep" /> <span data-i18n="options_dup_keep"></span></label>
+            </div>
+            <div class="table-wrap">
+              <table class="import-table">
+                <thead>
+                  <tr>
+                    <th class="col-check"><input type="checkbox" id="selectAllRows" checked data-i18n-aria-label="options_select_all" /></th>
+                    <th data-i18n="options_col_name"></th>
+                    <th data-i18n="options_col_account"></th>
+                    <th data-i18n="options_col_algo"></th>
+                    <th data-i18n="options_col_source"></th>
+                    <th data-i18n="options_col_status"></th>
+                  </tr>
+                </thead>
+                <tbody id="importTableBody"></tbody>
+              </table>
+            </div>
+            <div class="failures" id="importFailures" hidden>
+              <h4 data-i18n="options_failures_title"></h4>
+              <ul id="importFailureList"></ul>
+            </div>
+            <div class="import-commit">
+              <span class="hint" id="selectedCount"></span>
+              <button class="btn btn-primary" id="commitImportButton" type="button" data-i18n="options_confirm_import"></button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="tab-panel" id="panel-security" role="tabpanel" hidden>
+        <div class="section-head">
+          <div>
+            <h2 data-i18n="options_security_title"></h2>
+            <p data-i18n="options_security_sub"></p>
+          </div>
+        </div>
+        <div class="panel security-toggle-panel">
+          <div class="security-toggle-row">
+            <div class="security-toggle-text">
+              <h3 data-i18n="options_show_scan_codes_title"></h3>
+              <p data-i18n="options_show_scan_codes_text"></p>
+            </div>
+            <button class="switch" id="showScanCodesToggle" type="button" role="switch" aria-checked="false">
+              <span class="switch-knob"></span>
+            </button>
+          </div>
+        </div>
+        <div class="security-grid">
+          <article class="panel security-card">
+            <h3 data-i18n="options_security_card1_title"></h3>
+            <p data-i18n="options_security_card1_text"></p>
+          </article>
+          <article class="panel security-card">
+            <h3 data-i18n="options_security_card2_title"></h3>
+            <p data-i18n="options_security_card2_text"></p>
+          </article>
+          <article class="panel security-card">
+            <h3 data-i18n="options_security_card3_title"></h3>
+            <p data-i18n="options_security_card3_text"></p>
+          </article>
+          <article class="panel security-card">
+            <h3 data-i18n="options_security_card4_title"></h3>
+            <p data-i18n="options_security_card4_text"></p>
+          </article>
+          <article class="panel security-card">
+            <h3 data-i18n="options_security_card5_title"></h3>
+            <p data-i18n="options_security_card5_text"></p>
+          </article>
+          <article class="panel security-card security-card-warning">
+            <h3 data-i18n="options_security_card6_title"></h3>
+            <p data-i18n="options_security_card6_text"></p>
+          </article>
+        </div>
+        <div class="panel limitation-panel">
+          <h3 data-i18n="options_limitations_title"></h3>
+          <ul>
+            <li data-i18n="options_limitation1"></li>
+            <li data-i18n="options_limitation2"></li>
+            <li data-i18n="options_limitation3"></li>
+            <li data-i18n="options_limitation4"></li>
+            <li data-i18n="options_limitation5"></li>
+          </ul>
+        </div>
+      </section>
+    </main>
+
+    <footer class="page-footer">
+      <div class="page-shell footer-inner">
+        <a class="footer-link" href="https://space.bilibili.com/92408121" target="_blank" rel="noopener noreferrer">© bili觅果呀</a>
+        <span id="footerVersion"></span>
+      </div>
+    </footer>
+
+    <div id="modalRoot"></div>
+    <script type="module" src="options.js"></script>
+  </body>
+</html>

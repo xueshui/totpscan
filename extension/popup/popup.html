@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title data-i18n="extName"></title>
+    <link rel="stylesheet" href="../common/base.css" />
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <header class="app-header">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+            <path d="m9 12 2 2 4-4" />
+          </svg>
+        </div>
+        <div class="brand-text">
+          <h1 data-i18n="extName"></h1>
+          <p id="headerSub"></p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button id="themeToggle" class="icon-button" type="button" data-i18n-title="popup_theme_toggle" data-i18n-aria-label="popup_theme_toggle"></button>
+        <button id="editList" class="icon-button" type="button" data-i18n-title="popup_edit_list" data-i18n-aria-label="popup_edit_list" aria-pressed="false"></button>
+        <button id="openOptions" class="icon-button" type="button" data-i18n-title="popup_open_options" data-i18n-aria-label="popup_open_options"></button>
+      </div>
+    </header>
+
+    <div class="edit-hint" id="editHint" hidden data-i18n="popup_edit_hint"></div>
+
+    <div class="site-filter" id="siteFilter" hidden>
+      <div class="site-toggle" role="group" data-i18n-aria-label="popup_site_filter_aria">
+        <button class="site-toggle-btn is-active" id="siteOnlyBtn" type="button" aria-pressed="true" data-i18n="popup_site_only"></button>
+        <button class="site-toggle-btn" id="siteAllBtn" type="button" aria-pressed="false" data-i18n="popup_site_all"></button>
+      </div>
+    </div>
+
+    <div class="search-bar" id="searchBar" hidden>
+      <div class="search-field">
+        <span class="search-icon" aria-hidden="true">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="7" />
+            <path d="m20 20-3.6-3.6" />
+          </svg>
+        </span>
+        <input
+          id="searchInput"
+          class="search-input"
+          type="text"
+          autocomplete="off"
+          spellcheck="false"
+          data-i18n-placeholder="popup_search_placeholder"
+          data-i18n-aria-label="popup_search_placeholder"
+        />
+        <button
+          id="searchClear"
+          class="icon-button subtle search-clear"
+          type="button"
+          hidden
+          data-i18n-title="popup_search_clear"
+          data-i18n-aria-label="popup_search_clear"
+        ></button>
+      </div>
+    </div>
+
+    <main class="account-list" id="accountList" aria-live="polite">
+      <div class="list-loading" id="listLoading">
+        <div class="spinner"></div>
+        <span data-i18n="common_loading_accounts"></span>
+      </div>
+      <div class="empty-state" id="emptyState" hidden>
+        <div class="empty-icon" aria-hidden="true">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="7" height="7" rx="1.5" />
+            <rect x="14" y="3" width="7" height="7" rx="1.5" />
+            <rect x="3" y="14" width="7" height="7" rx="1.5" />
+            <path d="M14 14h3v3h-3zM20 14h1M14 20h1M18 20h3v1" />
+          </svg>
+        </div>
+        <h2 data-i18n="popup_empty_title"></h2>
+        <p data-i18n="popup_empty_text"></p>
+        <button class="btn btn-secondary btn-sm" id="emptyAdd" type="button" data-i18n="popup_empty_add"></button>
+      </div>
+      <div class="empty-state search-empty" id="searchEmpty" hidden>
+        <div class="empty-icon" aria-hidden="true">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="7" />
+            <path d="m20 20-3.6-3.6M8.5 8.5l5 5M13.5 8.5l-5 5" />
+          </svg>
+        </div>
+        <h2 data-i18n="popup_search_empty_title"></h2>
+        <p data-i18n="popup_search_empty_text"></p>
+        <button class="btn btn-secondary btn-sm" id="searchEmptyClear" type="button" data-i18n="popup_search_clear"></button>
+      </div>
+    </main>
+
+    <button id="scanFab" class="scan-fab" type="button" data-i18n-title="popup_scan_title" data-i18n-aria-label="popup_scan_title">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2" />
+        <path d="M7 12h10" />
+      </svg>
+      <span data-i18n="popup_scan"></span>
+    </button>
+
+    <div id="modalRoot"></div>
+    <script type="module" src="popup.js"></script>
+  </body>
+</html>

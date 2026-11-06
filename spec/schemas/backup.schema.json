@@ -1,0 +1,135 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://totpscan.example/schemas/backup.schema.json",
+  "title": "TOTPSCAN 浏览器扩展备份 v1",
+  "description": "仅适用于浏览器扩展。移动端（Android/iOS/鸿蒙）不得提供导入导出。明文与口令加密两种形态之一。",
+  "oneOf": [
+    { "$ref": "#/$defs/plaintextBackup" },
+    { "$ref": "#/$defs/encryptedBackup" }
+  ],
+  "$defs": {
+    "plaintextBackup": {
+      "type": "object",
+      "required": ["format", "version", "encrypted", "exportedAt", "accounts"],
+      "properties": {
+        "format": { "const": "totpscan-backup" },
+        "version": { "const": 1 },
+        "encrypted": { "const": false },
+        "exportedAt": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "导出时间（Unix 秒）"
+        },
+        "accounts": {
+          "type": "array",
+          "maxItems": 1000,
+          "items": { "$ref": "#/$defs/account" }
+        }
+      }
+    },
+    "encryptedBackup": {
+      "type": "object",
+      "required": ["format", "version", "encrypted", "kdf", "cipher", "ciphertext"],
+      "properties": {
+        "format": { "const": "totpscan-backup" },
+        "version": { "const": 1 },
+        "encrypted": { "const": true },
+        "kdf": {
+          "oneOf": [
+            { "$ref": "#/$defs/scryptKdf" },
+            { "$ref": "#/$defs/pbkdf2Kdf" }
+          ]
+        },
+        "cipher": {
+          "type": "object",
+          "required": ["name", "iv", "tag"],
+          "properties": {
+            "name": { "const": "AES-256-GCM" },
+            "iv": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_-]{16}$",
+              "description": "12 字节 CSPRNG IV，base64url 无填充"
+            },
+            "tag": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_-]{22}$",
+              "description": "16 字节 GCM 认证标签，base64url 无填充"
+            }
+          }
+        },
+        "ciphertext": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "description": "明文备份对象的 AES-256-GCM 密文，base64url 无填充"
+        }
+      }
+    },
+    "scryptKdf": {
+      "type": "object",
+      "required": ["name", "salt", "N", "r", "p"],
+      "properties": {
+        "name": { "const": "scrypt" },
+        "salt": { "$ref": "#/$defs/salt" },
+        "N": { "type": "integer", "minimum": 32768 },
+        "r": { "type": "integer", "minimum": 8 },
+        "p": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "pbkdf2Kdf": {
+      "type": "object",
+      "required": ["name", "salt", "hash", "iterations"],
+      "properties": {
+        "name": { "const": "PBKDF2" },
+        "salt": { "$ref": "#/$defs/salt" },
+        "hash": { "const": "SHA-256" },
+        "iterations": { "type": "integer", "minimum": 600000 }
+      }
+    },
+    "salt": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_-]{22,}$",
+      "description": "CSPRNG 生成的 ≥16 字节盐，base64url 无填充"
+    },
+    "account": {
+      "type": "object",
+      "required": ["type", "issuer", "account", "secret", "algorithm", "digits", "period"],
+      "properties": {
+        "type": { "enum": ["standard", "scan"] },
+        "issuer": { "type": "string", "minLength": 1, "maxLength": 64 },
+        "account": { "type": "string", "minLength": 1, "maxLength": 255 },
+        "label": { "type": "string", "maxLength": 64 },
+        "secret": {
+          "type": "string",
+          "pattern": "^[A-Z2-7]{16,205}$",
+          "description": "RFC 4648 Base32，大写、无填充、无空格；解码后 10–128 字节"
+        },
+        "algorithm": { "enum": ["SHA1", "SHA256", "SHA512"] },
+        "digits": { "enum": [6, 8] },
+        "period": { "type": "integer", "minimum": 1, "maximum": 3600 },
+        "submitUrl": {
+          "type": "string",
+          "minLength": 8,
+          "maxLength": 2048,
+          "pattern": "^(https|http)://[^?#@\\s]+$",
+          "description": "增强型账户必填；必须为 §7.2 规范形式；标准型不得出现"
+        },
+        "bid": { "type": "string", "pattern": "^b_[A-Za-z0-9_-]{16,64}$" }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "type": { "const": "standard" } }, "required": ["type"] },
+          "then": {
+            "not": { "anyOf": [{ "required": ["submitUrl"] }, { "required": ["bid"] }] }
+          }
+        },
+        {
+          "if": { "properties": { "type": { "const": "scan" } }, "required": ["type"] },
+          "then": {
+            "required": ["submitUrl", "bid"],
+            "properties": { "period": { "enum": [30, 60] } }
+          }
+        }
+      ]
+    }
+  }
+}

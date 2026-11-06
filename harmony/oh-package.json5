@@ -1,0 +1,13 @@
+{
+  "modelVersion": "5.0.0",
+  "name": "totpscan-harmony",
+  "version": "1.0.0",
+  "description": "扫码增强型 TOTP 认证器（HarmonyOS / ArkTS）",
+  "main": "",
+  "author": "",
+  "license": "Apache-2.0",
+  "dependencies": {},
+  "devDependencies": {
+    "@ohos/hypium": "1.0.19"
+  }
+}

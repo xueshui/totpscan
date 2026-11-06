@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://totpscan.example/schemas/error.schema.json",
+  "title": "TOTPSCAN 统一错误响应",
+  "description": "所有认证失败必须使用完全相同的 status/message 组合，不得暴露具体失败原因。",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["error", "message", "request_id"],
+  "properties": {
+    "error": {
+      "type": "string",
+      "enum": [
+        "authentication_failed",
+        "invalid_request",
+        "rate_limited",
+        "forbidden",
+        "not_found",
+        "method_not_allowed",
+        "internal_error"
+      ]
+    },
+    "message": {
+      "type": "string",
+      "description": "固定通用文案，不含原因、字段名、剩余次数或剩余时间"
+    },
+    "request_id": {
+      "type": "string",
+      "pattern": "^req_[A-Za-z0-9]{8,64}$"
+    }
+  }
+}

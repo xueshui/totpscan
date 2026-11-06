@@ -1,0 +1,533 @@
+openapi: 3.1.0
+info:
+  title: TOTPSCAN 参考服务端 API
+  version: 1.0.0
+  description: |
+    扫码增强型 TOTP 认证协议 v1 的服务端接口。
+
+    核心约束：
+    - 认证失败的响应参考实现统一为 401 + 固定 message（实现建议，见规范 §8.5）。
+    - 登录 `token` 为 16 / 24 位 base64url 会话标识；服务端校验其存在、未过期并与会话绑定。
+      一次性、失败计数与限流为参考实现建议，不是协议要求（规范 §8.4）。
+    - 服务端只返回绑定时的 `dom` 与 `path` 供 App 钉住；提交目标由 App 固定为 `scheme + dom + path`。
+    - 绑定载荷无签名、无公钥，App 不验签；防钓鱼依赖用户核对站点域名与提交路径。
+    - 本 API 不签发任何长期 bearer 会话令牌。
+
+    规范正文见 `spec/totp-scan-v1.md`。
+
+    本 API 仅覆盖“扫码型账户”的绑定与登录；标准型 TOTP 账户（`otpauth://totp` 导入或手动录入）
+    不涉及钉住地址与扫码提交，其动态码校验不属于本 API 范围（见规范 §13）。
+servers:
+  - url: http://localhost:8080
+    description: 本地参考实现（生产必须使用 HTTPS）
+
+tags:
+  - name: 绑定
+  - name: 登录
+  - name: 运维
+
+paths:
+  /healthz:
+    get:
+      tags: [运维]
+      operationId: getHealth
+      summary: 健康检查
+      security: []
+      responses:
+        "200":
+          description: 服务正常
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [status]
+                properties:
+                  status:
+                    const: ok
+
+  /totp/v1/bindings:
+    post:
+      tags: [绑定]
+      operationId: createBinding
+      summary: 创建待确认绑定并返回绑定二维码
+      description: |
+        需管理员令牌。服务端生成 TOTP 共享密钥并组装绑定二维码载荷。
+        绑定在确认前不可用于登录；创建时即确定 `dom`（站点域名）与 `path`（提交路径，含查询串）。
+      security:
+        - adminToken: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateBindingRequest"
+            examples:
+              default:
+                value:
+                  issuer: Example Corp
+                  account: alice@example.com
+      responses:
+        "201":
+          description: 绑定已创建（待确认）
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateBindingResponse"
+        "400":
+          $ref: "#/components/responses/InvalidRequest"
+        "401":
+          $ref: "#/components/responses/Forbidden"
+        "429":
+          $ref: "#/components/responses/RateLimited"
+
+  /totp/v1/bindings/{binding_id}/confirm:
+    post:
+      tags: [绑定]
+      operationId: confirmBinding
+      summary: 用动态码确认绑定
+      description: |
+        校验 App 提交的 TOTP 动态码（三时间窗），成功后绑定状态置为 `confirmed`。
+        单绑定确认失败 5 次即失效，必须重新发起绑定。
+      parameters:
+        - $ref: "#/components/parameters/BindingId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CodeRequest"
+      responses:
+        "200":
+          description: 绑定已确认
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BindingConfirmed"
+        "400":
+          $ref: "#/components/responses/InvalidRequest"
+        "401":
+          $ref: "#/components/responses/AuthenticationFailed"
+        "429":
+          $ref: "#/components/responses/RateLimited"
+
+  /totp/v1/bindings/{binding_id}/revoke:
+    post:
+      tags: [绑定]
+      operationId: revokeBinding
+      summary: 解绑
+      description: |
+        立即撤销绑定：该绑定的全部未消费 token 作废，重放记录清除，
+        之后针对该绑定的签发与校验一律失败（规范 S12，B 类实现建议）。
+      security:
+        - adminToken: []
+      parameters:
+        - $ref: "#/components/parameters/BindingId"
+      responses:
+        "200":
+          description: 已解绑
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BindingRevoked"
+        "401":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /totp/v1/login/token:
+    post:
+      tags: [登录]
+      operationId: issueToken
+      summary: 签发登录 token 与登录二维码
+      description: |
+        为当前浏览器会话签发登录 `token`（建议 ≤60 秒），返回登录二维码载荷。
+        请求必须携带 `account`；该 token 只对签发时的账户生效，提交体不再携带 `account`。
+        二维码中的 `url` 仅用于 App 与本地钉住的 `dom` 做注册域名比对，服务端不会向该地址发起请求，
+        提交路径固定使用绑定时的 `path`。未确认或已解绑的绑定不得签发 token。
+      security:
+        - sessionCookie: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/IssueTokenRequest"
+      responses:
+        "200":
+          description: 签发成功
+          headers:
+            Set-Cookie:
+              description: 浏览器会话 Cookie（HttpOnly; SameSite=Lax; 生产环境加 Secure）
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/IssueTokenResponse"
+        "400":
+          $ref: "#/components/responses/InvalidRequest"
+        "401":
+          $ref: "#/components/responses/AuthenticationFailed"
+        "429":
+          $ref: "#/components/responses/RateLimited"
+
+  /totp/v1/verify:
+    post:
+      tags: [登录]
+      operationId: verifyCode
+      summary: 提交动态码与登录 token
+      description: |
+        App 必须把该请求发送到绑定阶段钉住的完整提交地址（`scheme` + `dom` + `path`），
+        而不是登录二维码中的地址；请求体为 `{"code","token"}`，码与 token 不得进入 URL。
+        服务端按 token 绑定的账户选择已确认绑定的密钥，不据此改写或重定向提交目标。
+        成功即将当前会话标记为已认证；失败响应由接入方自行决定（参考实现统一为 401）。
+      security:
+        - sessionCookie: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/VerifyCodeRequest"
+      responses:
+        "200":
+          description: 验证成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VerifyCodeResponse"
+        "400":
+          $ref: "#/components/responses/InvalidRequest"
+        "401":
+          $ref: "#/components/responses/AuthenticationFailed"
+        "429":
+          $ref: "#/components/responses/RateLimited"
+
+  /totp/v1/session:
+    get:
+      tags: [登录]
+      operationId: getSession
+      summary: 查询当前会话认证状态
+      security:
+        - sessionCookie: []
+      responses:
+        "200":
+          description: 会话状态
+          headers:
+            Set-Cookie:
+              description: 首次访问时下发会话 Cookie
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SessionState"
+
+  /totp/v1/logout:
+    post:
+      tags: [登录]
+      operationId: logout
+      summary: 结束当前会话
+      description: 会话结束即作废其名下全部未消费 token。
+      security:
+        - sessionCookie: []
+      responses:
+        "200":
+          description: 已登出
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [status]
+                properties:
+                  status:
+                    const: ok
+
+components:
+  securitySchemes:
+    adminToken:
+      type: http
+      scheme: bearer
+      description: 管理令牌，必须通过环境变量 `ADMIN_TOKEN` 配置（≥32 字符）；服务端不内置默认值，未配置或长度不足时拒绝启动（规范 S14，B 类）。仅用于绑定创建与解绑。
+    sessionCookie:
+      type: apiKey
+      in: cookie
+      name: tsid
+      description: 服务端会话标识；登录 `token` 建议与该会话绑定（规范 §8.4）。
+
+  parameters:
+    BindingId:
+      name: binding_id
+      in: path
+      required: true
+      schema:
+        type: string
+        pattern: "^b_[A-Za-z0-9_-]{16,64}$"
+
+  responses:
+    InvalidRequest:
+      description: 请求格式无效（通用文案，不暗示凭据状态）
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+          example:
+            error: invalid_request
+            message: 请求格式无效
+            request_id: req_01J9Z3K7WQ8N2T5B6M4C0X1Y7V
+    AuthenticationFailed:
+      description: 认证失败（所有原因共用同一响应）
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+          example:
+            error: authentication_failed
+            message: 认证失败，请重新发起登录
+            request_id: req_01J9Z3K7WQ8N2T5B6M4C0X1Y7V
+    Forbidden:
+      description: 令牌无效或权限不足
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    RateLimited:
+      description: 触发限流（响应与凭据是否有效无关）
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+          example:
+            error: rate_limited
+            message: 请求过于频繁
+            request_id: req_01J9Z3K7WQ8N2T5B6M4C0X1Y7V
+    NotFound:
+      description: 资源不存在
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    InternalError:
+      description: 服务端内部错误（通用文案）
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+
+  schemas:
+    Error:
+      type: object
+      additionalProperties: false
+      required: [error, message, request_id]
+      properties:
+        error:
+          type: string
+          enum:
+            - authentication_failed
+            - invalid_request
+            - rate_limited
+            - forbidden
+            - not_found
+            - method_not_allowed
+            - internal_error
+        message:
+          type: string
+          description: 固定通用文案
+        request_id:
+          type: string
+          pattern: "^req_[A-Za-z0-9]{8,64}$"
+
+    BindingQr:
+      type: object
+      additionalProperties: false
+      required: [t, v, bid, iss, acc, sec, alg, dig, per, dom, path, iat]
+      properties:
+        t:
+          const: totp-bind
+        v:
+          const: 1
+        bid:
+          type: string
+        iss:
+          type: string
+        acc:
+          type: string
+        sec:
+          type: string
+          description: Base32 大写无填充；敏感数据
+        alg:
+          type: string
+          enum: [SHA1, SHA256, SHA512]
+        dig:
+          type: integer
+          enum: [6, 8]
+        per:
+          type: integer
+          enum: [30, 60]
+        dom:
+          type: string
+          description: 站点域名 host[:port]（IDNA A-label 小写）；App 钉住其注册域名
+        path:
+          type: string
+          description: 提交路径，含查询串，原样保留；App 钉住原值并用于构造提交地址，不参与登录比对
+        iat:
+          type: integer
+        exp:
+          type: integer
+
+    LoginQr:
+      type: object
+      additionalProperties: false
+      required: [t, v, url, token, exp]
+      properties:
+        t:
+          const: totp-login
+        v:
+          const: 1
+        url:
+          type: string
+          pattern: "^[A-Za-z0-9.-]+$"
+          description: 站点域名（如 qq.example.com），不带 scheme / 路径 / 端口；仅用于注册域名比对，绝不能作为提交目标
+        token:
+          type: string
+          pattern: "^(?:[A-Za-z0-9_-]{16}|[A-Za-z0-9_-]{24})$"
+          description: 16 或 24 位 base64url 会话标识
+        exp:
+          type: integer
+          description: 失效时间（Unix 秒）
+
+    CreateBindingRequest:
+      type: object
+      additionalProperties: false
+      required: [issuer, account]
+      properties:
+        issuer:
+          type: string
+          minLength: 1
+          maxLength: 64
+        account:
+          type: string
+          minLength: 1
+          maxLength: 255
+        algorithm:
+          type: string
+          enum: [SHA1, SHA256, SHA512]
+          default: SHA1
+        digits:
+          type: integer
+          enum: [6, 8]
+          default: 6
+        period:
+          type: integer
+          enum: [30, 60]
+          default: 30
+
+    CreateBindingResponse:
+      type: object
+      required: [binding_id, status, expires_at, binding_qr, binding_qr_text]
+      properties:
+        binding_id:
+          type: string
+        status:
+          type: string
+          enum: [pending]
+        expires_at:
+          type: integer
+        binding_qr:
+          $ref: "#/components/schemas/BindingQr"
+        binding_qr_text:
+          type: string
+          description: 紧凑 JSON 文本，可直接编码为二维码
+
+    CodeRequest:
+      type: object
+      additionalProperties: false
+      required: [code]
+      properties:
+        code:
+          type: string
+          pattern: "^[0-9]{6,8}$"
+
+    BindingConfirmed:
+      type: object
+      required: [binding_id, status, confirmed_at]
+      properties:
+        binding_id:
+          type: string
+        status:
+          const: confirmed
+        confirmed_at:
+          type: integer
+
+    BindingRevoked:
+      type: object
+      required: [binding_id, status, revoked_at]
+      properties:
+        binding_id:
+          type: string
+        status:
+          const: revoked
+        revoked_at:
+          type: integer
+
+    IssueTokenRequest:
+      type: object
+      additionalProperties: false
+      required: [account]
+      description: 必须指定 `account`，且该账户必须存在已确认且未解绑的绑定。
+      properties:
+        account:
+          type: string
+          minLength: 1
+          maxLength: 255
+
+    IssueTokenResponse:
+      type: object
+      required: [token, expires_at, expires_in, login_qr, login_qr_text]
+      properties:
+        token:
+          type: string
+          pattern: "^(?:[A-Za-z0-9_-]{16}|[A-Za-z0-9_-]{24})$"
+        expires_at:
+          type: integer
+        expires_in:
+          type: integer
+          maximum: 60
+        login_qr:
+          $ref: "#/components/schemas/LoginQr"
+        login_qr_text:
+          type: string
+          description: 紧凑 JSON 文本，可直接编码为二维码
+
+    VerifyCodeRequest:
+      type: object
+      additionalProperties: false
+      required: [code, token]
+      properties:
+        code:
+          type: string
+          pattern: "^[0-9]{6,8}$"
+        token:
+          type: string
+          pattern: "^(?:[A-Za-z0-9_-]{16}|[A-Za-z0-9_-]{24})$"
+          description: 登录二维码中的 token，原样回传；服务端据此选择签发时绑定的账户
+
+    VerifyCodeResponse:
+      type: object
+      required: [status, authenticated]
+      properties:
+        status:
+          const: ok
+        authenticated:
+          const: true
+
+    SessionState:
+      type: object
+      required: [authenticated]
+      properties:
+        authenticated:
+          type: boolean
+        binding_id:
+          type: [string, "null"]
+        expires_at:
+          type: integer

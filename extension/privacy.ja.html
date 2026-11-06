@@ -1,0 +1,1083 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light dark" />
+    <title>TOTP 认证器 隐私政策</title>
+    <style>
+      :root {
+        --bg: #f6f7f9;
+        --surface: #ffffff;
+        --text: #1f2430;
+        --text-secondary: #4a5160;
+        --text-muted: #667085;
+        --border: #e3e6eb;
+        --accent: #2f6fed;
+        --accent-contrast: #ffffff;
+        --accent-soft: #eef3ff;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #14161b;
+          --surface: #1b1e25;
+          --text: #e8eaf0;
+          --text-secondary: #c2c7d2;
+          --text-muted: #9aa1b0;
+          --border: #2b3038;
+          --accent: #7aa2ff;
+          --accent-contrast: #10131a;
+          --accent-soft: #1d2534;
+        }
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        -webkit-text-size-adjust: 100%;
+      }
+
+      body {
+        margin: 0;
+        padding: 40px 20px 72px;
+        background: var(--bg);
+        color: var(--text);
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei",
+          "Hiragino Sans GB", "Noto Sans JP", sans-serif;
+        font-size: 15px;
+        line-height: 1.85;
+        overflow-wrap: break-word;
+      }
+
+      .page {
+        width: 100%;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 36px 44px 40px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        box-shadow: 0 12px 36px rgba(16, 24, 40, 0.06);
+      }
+
+      .topbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px 18px;
+        flex-wrap: wrap;
+        padding-bottom: 20px;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-right: auto;
+        color: var(--text-muted);
+        font-size: 12px;
+        letter-spacing: 0.08em;
+      }
+
+      .brand-mark {
+        width: 26px;
+        height: 26px;
+        flex: none;
+        display: grid;
+        place-items: center;
+        border-radius: 8px;
+        background: var(--accent-soft);
+        color: var(--accent);
+      }
+
+      .lang-switch {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-left: auto;
+      }
+
+      .lang-switch button {
+        appearance: none;
+        min-height: 34px;
+        padding: 5px 10px;
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        background: var(--surface);
+        color: var(--text-secondary);
+        font: inherit;
+        font-size: 12.5px;
+        line-height: 1.3;
+        cursor: pointer;
+      }
+
+      .lang-switch button:hover {
+        border-color: var(--accent);
+        color: var(--accent);
+      }
+
+      .lang-switch button[aria-pressed="true"] {
+        border-color: var(--accent);
+        background: var(--accent);
+        color: var(--accent-contrast);
+      }
+
+      .lang-switch button:focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: 2px;
+      }
+
+      .lang-switch .auto {
+        border-style: dashed;
+      }
+
+      .lang-switch .auto[aria-pressed="true"] {
+        border-style: solid;
+      }
+
+      h1 {
+        margin: 22px 0 10px;
+        font-size: 30px;
+        line-height: 1.3;
+        letter-spacing: -0.01em;
+        overflow-wrap: anywhere;
+      }
+
+      .meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px 14px;
+        align-items: center;
+        margin-bottom: 26px;
+        padding-bottom: 20px;
+        border-bottom: 1px solid var(--border);
+        color: var(--text-muted);
+        font-size: 13px;
+      }
+
+      .tag {
+        padding: 2px 9px;
+        border-radius: 999px;
+        background: var(--accent-soft);
+        color: var(--accent);
+        font-size: 12px;
+      }
+
+      .lede {
+        margin: 0 0 28px;
+        color: var(--text-secondary);
+        font-size: 15px;
+      }
+
+      section + section {
+        margin-top: 34px;
+      }
+
+      h2 {
+        margin: 0 0 10px;
+        font-size: 17px;
+        line-height: 1.5;
+      }
+
+      h2 .num {
+        display: inline-block;
+        min-width: 22px;
+        color: var(--accent);
+        font-variant-numeric: tabular-nums;
+      }
+
+      p {
+        margin: 8px 0;
+      }
+
+      ul {
+        margin: 8px 0;
+        padding-left: 22px;
+      }
+
+      li + li {
+        margin-top: 6px;
+      }
+
+      strong {
+        font-weight: 650;
+      }
+
+      code {
+        padding: 1px 5px;
+        border-radius: 5px;
+        background: var(--accent-soft);
+        color: var(--text);
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        font-size: 0.9em;
+        overflow-wrap: anywhere;
+      }
+
+      .table-wrap {
+        margin: 12px 0 4px;
+        overflow-x: auto;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+      }
+
+      table {
+        width: 100%;
+        min-width: 520px;
+        border-collapse: collapse;
+        font-size: 13.5px;
+        line-height: 1.7;
+      }
+
+      th,
+      td {
+        padding: 11px 14px;
+        text-align: left;
+        vertical-align: top;
+      }
+
+      th {
+        background: var(--bg);
+        color: var(--text-secondary);
+        font-weight: 600;
+        white-space: nowrap;
+      }
+
+      tr + tr td,
+      tr + tr th {
+        border-top: 1px solid var(--border);
+      }
+
+      a {
+        color: var(--accent);
+        text-decoration: none;
+        text-underline-offset: 2px;
+        overflow-wrap: anywhere;
+      }
+
+      a:hover {
+        text-decoration: underline;
+      }
+
+      footer {
+        margin-top: 40px;
+        padding-top: 18px;
+        border-top: 1px solid var(--border);
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        gap: 6px 16px;
+        color: var(--text-muted);
+        font-size: 12.5px;
+      }
+
+      footer a {
+        color: inherit;
+      }
+
+      footer a:hover {
+        color: var(--text-secondary);
+        text-decoration: underline;
+      }
+
+      .noscript-note {
+        margin: 0 0 18px;
+        padding: 10px 12px;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        background: var(--bg);
+        color: var(--text-secondary);
+        font-size: 13px;
+      }
+
+      .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+      }
+
+      @media (max-width: 560px) {
+        body {
+          padding: 16px 10px 40px;
+          font-size: 14.5px;
+        }
+
+        .page {
+          padding: 22px 16px 26px;
+          border-radius: 14px;
+        }
+
+        .topbar {
+          align-items: flex-start;
+          padding-bottom: 16px;
+        }
+
+        h1 {
+          margin-top: 18px;
+          font-size: 24px;
+        }
+
+        .lang-switch button {
+          min-height: 32px;
+          padding: 5px 9px;
+          font-size: 12px;
+        }
+      }
+
+      @media print {
+        body {
+          padding: 0;
+          background: #fff;
+        }
+
+        .page {
+          border: 0;
+          box-shadow: none;
+          max-width: none;
+          padding: 0;
+        }
+
+        .lang-switch {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="page">
+      <header class="topbar">
+        <div class="brand">
+          <span class="brand-mark" aria-hidden="true">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+              <path d="m9 12 2 2 4-4" />
+            </svg>
+          </span>
+          <span id="brand-name">TOTP 认证器</span>
+        </div>
+        <div class="lang-switch" id="lang-switch" role="group" aria-label="语言选择">
+          <button type="button" data-lang="zh_CN" lang="zh-CN" aria-pressed="true">简体</button>
+          <button type="button" data-lang="zh_TW" lang="zh-TW" aria-pressed="false">繁體</button>
+          <button type="button" data-lang="en" lang="en" aria-pressed="false">English</button>
+          <button type="button" data-lang="ja" lang="ja" aria-pressed="false">日本語</button>
+          <button type="button" class="auto" id="lang-auto" aria-pressed="false">跟随浏览器</button>
+        </div>
+      </header>
+
+      <noscript>
+        <p class="noscript-note">当前未启用 JavaScript，仅显示简体中文正文。启用后可自动切换语言。</p>
+      </noscript>
+
+      <div id="content">
+        <h1>TOTP 认证器 隐私政策</h1>
+        <div class="meta">
+          <span class="tag">生效日期：2026-11-06</span>
+          <span>适用范围：Chrome / Microsoft Edge 扩展（Manifest V3）</span>
+        </div>
+
+        <p class="lede">
+          本政策说明「TOTP 认证器」会接触哪些数据、数据存放在哪里，以及在什么情况下会产生网络请求。
+        </p>
+
+        <section>
+          <h2><span class="num">1.</span>总则：本地优先，无账号体系</h2>
+          <ul>
+            <li>本扩展<strong>没有开发者服务器</strong>，没有账号体系，不需要注册或登录。</li>
+            <li><strong>不收集、不上传</strong>任何个人数据；无云同步、无遥测、无广告、无第三方统计，也不出售数据。</li>
+            <li>不加载远程代码，所有脚本与样式均随扩展包分发。</li>
+            <li>开发者在任何情况下都无法查看用户的账户、密钥、验证码或使用记录。</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2><span class="num">2.</span>密钥与账户数据：仅加密保存在本机</h2>
+          <p>以下数据仅保存在当前浏览器的扩展存储中（<code>chrome.storage.local</code> 与 IndexedDB），不会同步到云端：</p>
+          <div class="table-wrap">
+            <table>
+              <caption class="sr-only">本地存储的数据</caption>
+              <thead>
+                <tr>
+                  <th>数据</th>
+                  <th>用途</th>
+                  <th>存放方式</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>账户显示名、签发方、账户标识、本地备注</td>
+                  <td>在弹窗与设置页展示、排序、搜索</td>
+                  <td>仅本地；备注最长 64 个字符</td>
+                </tr>
+                <tr>
+                  <td>TOTP 共享密钥</td>
+                  <td>在本机计算动态码</td>
+                  <td>以 AES-GCM 密文写入扩展存储；用于解密的 AES 主密钥保存在 IndexedDB，创建时设置为不可导出（<code>extractable=false</code>）</td>
+                </tr>
+                <tr>
+                  <td>绑定的验证服务器地址</td>
+                  <td>扫码登录时提交验证码</td>
+                  <td>来自用户在绑定阶段扫描并确认的固定地址</td>
+                </tr>
+                <tr>
+                  <td>主题偏好</td>
+                  <td>记住主题色与明暗模式</td>
+                  <td>仅界面外观，保存在本地</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p>上述数据不会离开本机，除非用户主动导出备份。用户可随时在设置页删除本地账户数据，或卸载扩展以清除扩展存储；删除后无法恢复。</p>
+        </section>
+
+        <section>
+          <h2><span class="num">3.</span>网络请求：只向已绑定的固定地址提交验证码</h2>
+          <ul>
+            <li>只有在用户主动发起扫码提交时，扩展才会把当前动态码 <strong>POST 到用户在绑定阶段扫描并确认过的固定地址</strong>。</li>
+            <li>该地址由用户所在组织的服务端提供，<strong>不经过开发者中转</strong>，开发者不知道也无法访问该地址。</li>
+            <li>如果二维码中的地址与本地固定地址不匹配，扩展会<strong>在本地中止</strong>：不计算动态码，也不发送任何请求。</li>
+            <li>除向该固定地址提交一次性验证码外，扩展<strong>不发起任何外部网络请求</strong>：没有统计上报、远程配置、字体或图片外链。</li>
+            <li>增强型（扫码）账户<strong>不展示动态码、不提供复制</strong>，只在提交时于本机内存中计算。</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2><span class="num">4.</span>剪贴板：只写不读</h2>
+          <ul>
+            <li>仅在用户点击「复制」时，扩展才把当前动态码写入剪贴板；页面中没有可填写的输入框时，也可能退化为静默复制。</li>
+            <li>扩展<strong>从不读取剪贴板内容</strong>，也不会把剪贴板内容发送到任何地方。</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2><span class="num">5.</span>网页内容：按需临时读取</h2>
+          <ul>
+            <li>扩展不常驻任何网页，也没有声明全站内容脚本；只有在用户点击扩展图标或「扫码」按钮时，才会通过 <code>activeTab</code> + <code>chrome.scripting</code> 对当前标签页临时注入脚本。</li>
+            <li>临时读取仅用于识别当前页面图像、<code>canvas</code>、<code>svg</code> 或视频帧中的二维码，以及把动态码填入用户当前聚焦的输入框。</li>
+            <li>扩展<strong>不采集、不记录、不外传</strong>页面内容，不读取与上述目的无关的 DOM，也不会在用户未触发时注入或运行。</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2><span class="num">6.</span>备份：本机生成与解析</h2>
+          <ul>
+            <li>支持明文 JSON、口令加密 JSON（PBKDF2-SHA256 + AES-256-GCM）与 <code>authenticator.txt</code>；备份文件由浏览器直接下载到本机。</li>
+            <li>导入的文件只在本机解析；口令不会被写入文件，也不保存在扩展中。</li>
+            <li>备份文件<strong>不会上传</strong>；开发者无法访问、恢复或解密用户的备份文件。</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2><span class="num">7.</span>政策变更与联系方式</h2>
+          <ul>
+            <li>本扩展不面向儿童设计，也不收集任何用户数据。</li>
+            <li>政策发生变更时，会更新本页顶部的生效日期并在本页发布；涉及数据处理的重大变更，会同时在扩展更新说明中提示。</li>
+            <li>如对本政策有疑问，可通过以下唯一渠道联系开发者：B 站空间 <a href="https://space.bilibili.com/92408121" target="_blank" rel="noopener noreferrer">https://space.bilibili.com/92408121</a></li>
+          </ul>
+        </section>
+
+        <footer>
+          <a href="https://space.bilibili.com/92408121" target="_blank" rel="noopener noreferrer">© bili觅果呀</a>
+          <span>最后更新：2026-11-06</span>
+        </footer>
+      </div>
+    </main>
+
+    <script>
+      (function () {
+        "use strict";
+
+        var FORCED_LANG = "ja";
+        var STORAGE_BASE = "totpscan.privacy.lang";
+        var STORAGE_KEY = FORCED_LANG ? STORAGE_BASE + "." + FORCED_LANG : STORAGE_BASE;
+
+        var I18N = {
+          zh_CN: {
+            htmlLang: "zh-CN",
+            title: "TOTP 认证器 隐私政策",
+            brand: "TOTP 认证器",
+            switchLabel: "语言选择",
+            autoLabel: "跟随浏览器",
+            langNames: ["简体中文", "繁體中文", "英语", "日语"],
+            body: `
+        <h1>TOTP 认证器 隐私政策</h1>
+        <div class="meta">
+          <span class="tag">生效日期：2026-11-06</span>
+          <span>适用范围：Chrome / Microsoft Edge 扩展（Manifest V3）</span>
+        </div>
+
+        <p class="lede">
+          本政策说明「TOTP 认证器」会接触哪些数据、数据存放在哪里，以及在什么情况下会产生网络请求。
+        </p>
+
+        <section>
+          <h2><span class="num">1.</span>总则：本地优先，无账号体系</h2>
+          <ul>
+            <li>本扩展<strong>没有开发者服务器</strong>，没有账号体系，不需要注册或登录。</li>
+            <li><strong>不收集、不上传</strong>任何个人数据；无云同步、无遥测、无广告、无第三方统计，也不出售数据。</li>
+            <li>不加载远程代码，所有脚本与样式均随扩展包分发。</li>
+            <li>开发者在任何情况下都无法查看用户的账户、密钥、验证码或使用记录。</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2><span class="num">2.</span>密钥与账户数据：仅加密保存在本机</h2>
+          <p>以下数据仅保存在当前浏览器的扩展存储中（<code>chrome.storage.local</code> 与 IndexedDB），不会同步到云端：</p>
+          <div class="table-wrap">
+            <table>
+              <caption class="sr-only">本地存储的数据</caption>
+              <thead>
+                <tr>
+                  <th>数据</th>
+                  <th>用途</th>
+                  <th>存放方式</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>账户显示名、签发方、账户标识、本地备注</td>
+                  <td>在弹窗与设置页展示、排序、搜索</td>
+                  <td>仅本地；备注最长 64 个字符</td>
+                </tr>
+                <tr>
+                  <td>TOTP 共享密钥</td>
+                  <td>在本机计算动态码</td>
+                  <td>以 AES-GCM 密文写入扩展存储；用于解密的 AES 主密钥保存在 IndexedDB，创建时设置为不可导出（<code>extractable=false</code>）</td>
+                </tr>
+                <tr>
+                  <td>绑定的验证服务器地址</td>
+                  <td>扫码登录时提交验证码</td>
+                  <td>来自用户在绑定阶段扫描并确认的固定地址</td>
+                </tr>
+                <tr>
+                  <td>主题偏好</td>
+                  <td>记住主题色与明暗模式</td>
+                  <td>仅界面外观，保存在本地</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p>上述数据不会离开本机，除非用户主动导出备份。用户可随时在设置页删除本地账户数据，或卸载扩展以清除扩展存储；删除后无法恢复。</p>
+        </section>
+
+        <section>
+          <h2><span class="num">3.</span>网络请求：只向已绑定的固定地址提交验证码</h2>
+          <ul>
+            <li>只有在用户主动发起扫码提交时，扩展才会把当前动态码 <strong>POST 到用户在绑定阶段扫描并确认过的固定地址</strong>。</li>
+            <li>该地址由用户所在组织的服务端提供，<strong>不经过开发者中转</strong>，开发者不知道也无法访问该地址。</li>
+            <li>如果二维码中的地址与本地固定地址不匹配，扩展会<strong>在本地中止</strong>：不计算动态码，也不发送任何请求。</li>
+            <li>除向该固定地址提交一次性验证码外，扩展<strong>不发起任何外部网络请求</strong>：没有统计上报、远程配置、字体或图片外链。</li>
+            <li>增强型（扫码）账户<strong>不展示动态码、不提供复制</strong>，只在提交时于本机内存中计算。</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2><span class="num">4.</span>剪贴板：只写不读</h2>
+          <ul>
+            <li>仅在用户点击「复制」时，扩展才把当前动态码写入剪贴板；页面中没有可填写的输入框时，也可能退化为静默复制。</li>
+            <li>扩展<strong>从不读取剪贴板内容</strong>，也不会把剪贴板内容发送到任何地方。</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2><span class="num">5.</span>网页内容：按需临时读取</h2>
+          <ul>
+            <li>扩展不常驻任何网页，也没有声明全站内容脚本；只有在用户点击扩展图标或「扫码」按钮时，才会通过 <code>activeTab</code> + <code>chrome.scripting</code> 对当前标签页临时注入脚本。</li>
+            <li>临时读取仅用于识别当前页面图像、<code>canvas</code>、<code>svg</code> 或视频帧中的二维码，以及把动态码填入用户当前聚焦的输入框。</li>
+            <li>扩展<strong>不采集、不记录、不外传</strong>页面内容，不读取与上述目的无关的 DOM，也不会在用户未触发时注入或运行。</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2><span class="num">6.</span>备份：本机生成与解析</h2>
+          <ul>
+            <li>支持明文 JSON、口令加密 JSON（PBKDF2-SHA256 + AES-256-GCM）与 <code>authenticator.txt</code>；备份文件由浏览器直接下载到本机。</li>
+            <li>导入的文件只在本机解析；口令不会被写入文件，也不保存在扩展中。</li>
+            <li>备份文件<strong>不会上传</strong>；开发者无法访问、恢复或解密用户的备份文件。</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2><span class="num">7.</span>政策变更与联系方式</h2>
+          <ul>
+            <li>本扩展不面向儿童设计，也不收集任何用户数据。</li>
+            <li>政策发生变更时，会更新本页顶部的生效日期并在本页发布；涉及数据处理的重大变更，会同时在扩展更新说明中提示。</li>
+            <li>如对本政策有疑问，可通过以下唯一渠道联系开发者：B 站空间 <a href="https://space.bilibili.com/92408121" target="_blank" rel="noopener noreferrer">https://space.bilibili.com/92408121</a></li>
+          </ul>
+        </section>
+
+        <footer>
+          <a href="https://space.bilibili.com/92408121" target="_blank" rel="noopener noreferrer">© bili觅果呀</a>
+          <span>最后更新：2026-11-06</span>
+        </footer>`
+          },
+
+          zh_TW: {
+            htmlLang: "zh-TW",
+            title: "TOTP 驗證器 隱私政策",
+            brand: "TOTP 驗證器",
+            switchLabel: "語言選擇",
+            autoLabel: "跟隨瀏覽器",
+            langNames: ["簡體中文", "繁體中文", "英文", "日文"],
+            body: `
+        <h1>TOTP 驗證器 隱私政策</h1>
+        <div class="meta">
+          <span class="tag">生效日期：2026-11-06</span>
+          <span>適用範圍：Chrome / Microsoft Edge 擴充功能（Manifest V3）</span>
+        </div>
+
+        <p class="lede">
+          本政策說明「TOTP 驗證器」會接觸哪些資料、資料存放在哪裡，以及在什麼情況下會產生網路請求。
+        </p>
+
+        <section>
+          <h2><span class="num">1.</span>總則：本地優先，無帳號體系</h2>
+          <ul>
+            <li>本擴充功能<strong>沒有開發者伺服器</strong>，沒有帳號體系，不需要註冊或登入。</li>
+            <li><strong>不收集、不上傳</strong>任何個人資料；無雲端同步、無遙測、無廣告、無第三方統計，也不出售資料。</li>
+            <li>不載入遠端程式碼，所有指令碼與樣式均隨擴充功能套件分發。</li>
+            <li>開發者在任何情況下都無法查看使用者的帳戶、金鑰、驗證碼或使用記錄。</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2><span class="num">2.</span>金鑰與帳戶資料：僅加密保存在本機</h2>
+          <p>以下資料僅保存在目前瀏覽器的擴充功能儲存空間中（<code>chrome.storage.local</code> 與 IndexedDB），不會同步到雲端：</p>
+          <div class="table-wrap">
+            <table>
+              <caption class="sr-only">本機儲存的資料</caption>
+              <thead>
+                <tr>
+                  <th>資料</th>
+                  <th>用途</th>
+                  <th>存放方式</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>帳戶顯示名稱、簽發方、帳戶識別碼、本機備註</td>
+                  <td>在彈出視窗與設定頁顯示、排序、搜尋</td>
+                  <td>僅本機；備註最長 64 個字元</td>
+                </tr>
+                <tr>
+                  <td>TOTP 共用金鑰</td>
+                  <td>在本機計算動態碼</td>
+                  <td>以 AES-GCM 密文寫入擴充功能儲存空間；用於解密的主金鑰保存在 IndexedDB，建立時設為不可匯出（<code>extractable=false</code>）</td>
+                </tr>
+                <tr>
+                  <td>綁定的驗證伺服器位址</td>
+                  <td>掃碼登入時提交驗證碼</td>
+                  <td>來自使用者在綁定階段掃描並簽章確認的固定位址</td>
+                </tr>
+                <tr>
+                  <td>主題偏好</td>
+                  <td>記住主題色與明暗模式</td>
+                  <td>僅介面外觀，保存在本機</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p>上述資料不會離開本機，除非使用者主動匯出備份。使用者可隨時在設定頁刪除本機帳戶資料，或解除安裝擴充功能以清除儲存空間；刪除後無法復原。</p>
+        </section>
+
+        <section>
+          <h2><span class="num">3.</span>網路請求：只向已綁定的固定位址提交驗證碼</h2>
+          <ul>
+            <li>只有在使用者主動發起掃碼提交時，擴充功能才會把目前動態碼 <strong>POST 到使用者在綁定階段掃描並簽章確認過的固定位址</strong>。</li>
+            <li>該位址由使用者所屬組織的伺服器提供，<strong>不經過開發者中轉</strong>，開發者不知道也無法存取該位址。</li>
+            <li>如果 QR 碼中的位址與本機固定位址不符，擴充功能會<strong>在本機中止</strong>：不計算動態碼，也不送出任何請求。</li>
+            <li>除向該固定位址提交一次性驗證碼外，擴充功能<strong>不發起任何外部網路請求</strong>：沒有統計上報、遠端設定、字型或圖片外鏈。</li>
+            <li>增強型（掃碼）帳戶<strong>不顯示動態碼、不提供複製</strong>，只在提交時於本機記憶體中計算。</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2><span class="num">4.</span>剪貼簿：只寫不讀</h2>
+          <ul>
+            <li>僅在使用者點擊「複製」時，擴充功能才把目前動態碼寫入剪貼簿；頁面中沒有可填寫的輸入框時，也可能退化為靜默複製。</li>
+            <li>擴充功能<strong>從不讀取剪貼簿內容</strong>，也不會把剪貼簿內容傳送到任何地方。</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2><span class="num">5.</span>網頁內容：按需暫時讀取</h2>
+          <ul>
+            <li>擴充功能不常駐任何網頁，也沒有宣告全站內容指令碼；只有在使用者點擊擴充功能圖示或「掃碼」按鈕時，才會透過 <code>activeTab</code> + <code>chrome.scripting</code> 對目前分頁暫時注入指令碼。</li>
+            <li>暫時讀取僅用於識別目前頁面影像、<code>canvas</code>、<code>svg</code> 或影片影格中的 QR 碼，以及把動態碼填入使用者目前聚焦的輸入框。</li>
+            <li>擴充功能<strong>不蒐集、不記錄、不外傳</strong>頁面內容，不讀取與上述目的無關的 DOM，也不會在使用者未觸發時注入或執行。</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2><span class="num">6.</span>備份：本機產生與解析</h2>
+          <ul>
+            <li>支援明文 JSON、口令加密 JSON（PBKDF2-SHA256 + AES-256-GCM）與 <code>authenticator.txt</code>；備份檔案由瀏覽器直接下載到本機。</li>
+            <li>匯入的檔案只在本機解析；口令不會被寫入檔案，也不保存在擴充功能中。</li>
+            <li>備份檔案<strong>不會上傳</strong>；開發者無法存取、還原或解密使用者的備份檔案。</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2><span class="num">7.</span>政策變更與聯絡方式</h2>
+          <ul>
+            <li>本擴充功能不專為兒童設計，也不收集任何使用者資料。</li>
+            <li>政策變更時，會更新本頁頂端的生效日期並在本頁發布；涉及資料處理的重大變更，會同時在擴充功能更新說明中提示。</li>
+            <li>如對本政策有疑問，可透過以下唯一管道聯絡開發者：B 站空間 <a href="https://space.bilibili.com/92408121" target="_blank" rel="noopener noreferrer">https://space.bilibili.com/92408121</a></li>
+          </ul>
+        </section>
+
+        <footer>
+          <a href="https://space.bilibili.com/92408121" target="_blank" rel="noopener noreferrer">© bili觅果呀</a>
+          <span>最後更新：2026-11-06</span>
+        </footer>`
+          },
+
+          en: {
+            htmlLang: "en",
+            title: "Privacy Policy · TOTP Authenticator",
+            brand: "TOTP Authenticator",
+            switchLabel: "Language",
+            autoLabel: "Follow browser",
+            langNames: ["Simplified Chinese", "Traditional Chinese", "English", "Japanese"],
+            body: `
+        <h1>TOTP Authenticator Privacy Policy</h1>
+        <div class="meta">
+          <span class="tag">Effective date: 2026-11-06</span>
+          <span>Scope: Chrome / Microsoft Edge extension (Manifest V3)</span>
+        </div>
+
+        <p class="lede">
+          This policy explains what data “TOTP Authenticator” touches, where that data is stored, and when network requests occur.
+        </p>
+
+        <section>
+          <h2><span class="num">1.</span>Principles: local-first, no accounts</h2>
+          <ul>
+            <li>The extension has <strong>no developer servers</strong>, no account system, and requires no sign-up or login.</li>
+            <li><strong>No personal data is collected or uploaded</strong>; there is no cloud sync, telemetry, advertising, third-party analytics, and no data selling.</li>
+            <li>No remote code is loaded; all scripts and styles ship with the extension package.</li>
+            <li>The developer cannot access accounts, secrets, codes, or usage records under any circumstances.</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2><span class="num">2.</span>Secrets and account data: encrypted on this device only</h2>
+          <p>The following data is stored only in the current browser's extension storage (<code>chrome.storage.local</code> and IndexedDB) and is never synced to the cloud:</p>
+          <div class="table-wrap">
+            <table>
+              <caption class="sr-only">Data stored locally</caption>
+              <thead>
+                <tr>
+                  <th>Data</th>
+                  <th>Purpose</th>
+                  <th>Storage</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Account display name, issuer, account identifier, local note</td>
+                  <td>Display, sort, and search in the popup and Settings</td>
+                  <td>Local only; notes are at most 64 characters</td>
+                </tr>
+                <tr>
+                  <td>TOTP shared secret</td>
+                  <td>Compute codes on this device</td>
+                  <td>Written to extension storage as AES-GCM ciphertext; the master key used for decryption lives in IndexedDB and is created non-exportable (<code>extractable=false</code>)</td>
+                </tr>
+                <tr>
+                  <td>Bound verification server URL</td>
+                  <td>Submit codes during QR sign-in</td>
+                  <td>Taken from the fixed URL the user scanned and confirmed during binding</td>
+                </tr>
+                <tr>
+                  <td>Theme preference</td>
+                  <td>Remember theme color and light/dark mode</td>
+                  <td>Appearance only, stored locally</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p>This data does not leave the device unless the user exports a backup. Users can delete local account data in Settings at any time, or uninstall the extension to clear extension storage; deleted data cannot be recovered.</p>
+        </section>
+
+        <section>
+          <h2><span class="num">3.</span>Network requests: only the bound fixed URL</h2>
+          <ul>
+            <li>Only when the user starts a QR submission does the extension <strong>POST the current code to the fixed URL the user scanned and confirmed during binding</strong>.</li>
+            <li>That URL is provided by the user's organization; it is <strong>never relayed through the developer</strong>, who neither knows nor can access it.</li>
+            <li>If the URL in the QR code does not match the local fixed URL, the extension <strong>stops locally</strong>: it does not compute a code and sends no request.</li>
+            <li>Apart from submitting a one-time code to that fixed URL, the extension <strong>makes no external network requests</strong>: no analytics, remote configuration, fonts, or image links.</li>
+            <li>Enhanced (QR) accounts <strong>never display codes and offer no copying</strong>; the code is computed in local memory only at submission time.</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2><span class="num">4.</span>Clipboard: write-only</h2>
+          <ul>
+            <li>The extension writes the current code to the clipboard only when the user clicks Copy; it may also copy silently when the page has no input field to fill.</li>
+            <li>The extension <strong>never reads clipboard contents</strong> and never sends clipboard contents anywhere.</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2><span class="num">5.</span>Page content: temporary, on demand</h2>
+          <ul>
+            <li>The extension does not stay on any page and declares no all-site content script; only when the user clicks the extension icon or the Scan button does it temporarily inject a script via <code>activeTab</code> + <code>chrome.scripting</code>.</li>
+            <li>That temporary access is used only to recognize QR codes in images, <code>canvas</code>, <code>svg</code>, or video frames on the current page, and to fill the code into the input field the user has focused.</li>
+            <li>The extension <strong>does not collect, log, or transmit</strong> page content, does not read unrelated DOM, and does not inject or run when the user has not triggered it.</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2><span class="num">6.</span>Backups: created and parsed locally</h2>
+          <ul>
+            <li>Supports plain JSON, password-encrypted JSON (PBKDF2-SHA256 + AES-256-GCM), and <code>authenticator.txt</code>; backup files are downloaded directly to this device by the browser.</li>
+            <li>Imported files are parsed locally only; the password is never written to a file or stored by the extension.</li>
+            <li>Backup files are <strong>never uploaded</strong>; the developer cannot access, restore, or decrypt them.</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2><span class="num">7.</span>Policy changes and contact</h2>
+          <ul>
+            <li>The extension is not designed for children and collects no user data.</li>
+            <li>When this policy changes, the effective date at the top of this page is updated and the new version is published here; significant changes to data handling are also noted in the extension's release notes.</li>
+            <li>If you have questions about this policy, the only contact channel is the developer's Bilibili space: <a href="https://space.bilibili.com/92408121" target="_blank" rel="noopener noreferrer">https://space.bilibili.com/92408121</a></li>
+          </ul>
+        </section>
+
+        <footer>
+          <a href="https://space.bilibili.com/92408121" target="_blank" rel="noopener noreferrer">© bili觅果呀</a>
+          <span>Last updated: 2026-11-06</span>
+        </footer>`
+          },
+
+          ja: {
+            htmlLang: "ja",
+            title: "TOTP 認証アプリ プライバシーポリシー",
+            brand: "TOTP 認証アプリ",
+            switchLabel: "言語",
+            autoLabel: "ブラウザに合わせる",
+            langNames: ["簡体字中国語", "繁体字中国語", "英語", "日本語"],
+            body: `
+        <h1>TOTP 認証アプリ プライバシーポリシー</h1>
+        <div class="meta">
+          <span class="tag">発効日：2026-11-06</span>
+          <span>対象：Chrome / Microsoft Edge 拡張機能（Manifest V3）</span>
+        </div>
+
+        <p class="lede">
+          本ポリシーは、「TOTP 認証アプリ」が扱うデータ、その保存場所、およびネットワーク通信が発生する条件を説明します。
+        </p>
+
+        <section>
+          <h2><span class="num">1.</span>基本方針：ローカル優先、アカウントなし</h2>
+          <ul>
+            <li>本拡張機能には<strong>開発者サーバーがなく</strong>、アカウント体系もなく、登録やログインは不要です。</li>
+            <li><strong>個人データの収集・送信は行いません</strong>。クラウド同期、テレメトリ、広告、第三者分析、データ販売もありません。</li>
+            <li>リモートコードを読み込まず、スクリプトとスタイルはすべて拡張機能パッケージに含まれます。</li>
+            <li>開発者は、いかなる場合もアカウント、シークレット、コード、利用記録を閲覧できません。</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2><span class="num">2.</span>シークレットとアカウントデータ：この端末に暗号化して保存</h2>
+          <p>以下のデータは現在のブラウザの拡張機能ストレージ（<code>chrome.storage.local</code> と IndexedDB）にのみ保存され、クラウドには同期されません：</p>
+          <div class="table-wrap">
+            <table>
+              <caption class="sr-only">ローカルに保存されるデータ</caption>
+              <thead>
+                <tr>
+                  <th>データ</th>
+                  <th>用途</th>
+                  <th>保存方法</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>アカウント表示名、発行者、アカウント識別子、ローカルメモ</td>
+                  <td>ポップアップと設定画面での表示・並べ替え・検索</td>
+                  <td>ローカルのみ。メモは最大 64 文字</td>
+                </tr>
+                <tr>
+                  <td>TOTP 共有シークレット</td>
+                  <td>端末内でコードを計算</td>
+                  <td>AES-GCM 暗号文として拡張機能ストレージに保存。復号に使うマスターキーは IndexedDB に保存され、作成時にエクスポート不可（<code>extractable=false</code>）に設定されます</td>
+                </tr>
+                <tr>
+                  <td>バインド済み検証サーバー URL</td>
+                  <td>QR サインイン時のコード送信</td>
+                  <td>バインド時にユーザーが読み取り、署名を確認した固定 URL に由来します</td>
+                </tr>
+                <tr>
+                  <td>テーマ設定</td>
+                  <td>テーマカラーと明暗モードの記憶</td>
+                  <td>外観のみ。ローカルに保存</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p>これらのデータは、ユーザーがバックアップを書き出さない限り端末外に出ません。ユーザーは設定画面でいつでもローカルのアカウントデータを削除でき、拡張機能をアンインストールすると拡張機能ストレージが消去されます。削除したデータは復元できません。</p>
+        </section>
+
+        <section>
+          <h2><span class="num">3.</span>ネットワーク通信：バインド済み固定 URL への送信のみ</h2>
+          <ul>
+            <li>ユーザーが QR 送信を開始したときだけ、拡張機能は現在のコードを<strong>バインド時に読み取り、署名を確認した固定 URL へ POST</strong> します。</li>
+            <li>この URL はユーザーの所属組織が提供するもので、<strong>開発者を経由しません</strong>。開発者は URL を知ることもアクセスすることもできません。</li>
+            <li>QR コード内の URL がローカルの固定 URL と一致しない場合、拡張機能は<strong>ローカルで中止</strong>し、コードを計算せず、リクエストも送信しません。</li>
+            <li>この固定 URL へのワンタイムコード送信以外に、拡張機能は<strong>外部ネットワーク通信を行いません</strong>。統計送信、リモート設定、フォントや画像の外部参照はありません。</li>
+            <li>拡張型（QR）アカウントは<strong>コードを表示せず、コピーも提供しません</strong>。送信時のみローカルメモリで計算します。</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2><span class="num">4.</span>クリップボード：書き込みのみ</h2>
+          <ul>
+            <li>ユーザーが「コピー」をクリックしたときだけ、拡張機能は現在のコードをクリップボードに書き込みます。ページに入力欄がない場合は、無言でコピーすることがあります。</li>
+            <li>拡張機能は<strong>クリップボードの内容を読み取ることはなく</strong>、どこかへ送信することもありません。</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2><span class="num">5.</span>ページ内容：必要時に一時的に読み取り</h2>
+          <ul>
+            <li>拡張機能はどのページにも常駐せず、全サイトのコンテンツスクリプトも宣言していません。ユーザーが拡張機能アイコンまたは「スキャン」ボタンをクリックしたときだけ、<code>activeTab</code> + <code>chrome.scripting</code> で現在のタブに一時的にスクリプトを注入します。</li>
+            <li>この一時的な読み取りは、現在のページの画像、<code>canvas</code>、<code>svg</code>、動画フレーム内の QR コードの認識と、フォーカス中の入力欄へのコード入力にのみ使われます。</li>
+            <li>拡張機能はページ内容を<strong>収集・記録・外部送信せず</strong>、目的外の DOM も読み取りません。ユーザーが操作していないときに注入・実行することもありません。</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2><span class="num">6.</span>バックアップ：端末内で作成・解析</h2>
+          <ul>
+            <li>平文 JSON、パスワード暗号化 JSON（PBKDF2-SHA256 + AES-256-GCM）、<code>authenticator.txt</code> に対応しています。バックアップファイルはブラウザから直接この端末にダウンロードされます。</li>
+            <li>インポートしたファイルは端末内でのみ解析されます。パスワードはファイルに書き込まれず、拡張機能にも保存されません。</li>
+            <li>バックアップファイルは<strong>アップロードされません</strong>。開発者はアクセス・復元・復号できません。</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2><span class="num">7.</span>ポリシーの変更と連絡先</h2>
+          <ul>
+            <li>本拡張機能は子ども向けではなく、ユーザーデータを収集しません。</li>
+            <li>ポリシーを変更する場合は、本ページ上部の発効日を更新してここに掲載します。データ処理に関する重要な変更は、拡張機能の更新情報でも案内します。</li>
+            <li>本ポリシーについてご質問がある場合は、次の唯一の窓口（Bilibili スペース）から開発者にご連絡ください：<a href="https://space.bilibili.com/92408121" target="_blank" rel="noopener noreferrer">https://space.bilibili.com/92408121</a></li>
+          </ul>
+        </section>
+
+        <footer>
+          <a href="https://space.bilibili.com/92408121" target="_blank" rel="noopener noreferrer">© bili觅果呀</a>
+          <span>最終更新：2026-11-06</span>
+        </footer>`
+          }
+        };
+
+        var content = document.getElementById("content");
+        var switcher = document.getElementById("lang-switch");
+        var autoButton = document.getElementById("lang-auto");
+        var brandName = document.getElementById("brand-name");
+        var langButtons = switcher.querySelectorAll("button[data-lang]");
+
+        function readStored() {
+          try {
+            return window.localStorage.getItem(STORAGE_KEY);
+          } catch (error) {
+            return null;
+          }
+        }
+
+        function saveStored(lang) {
+          try {
+            window.localStorage.setItem(STORAGE_KEY, lang);
+          } catch (error) {
+            /* Storage may be unavailable; switching still works for this view. */
+          }
+        }
+
+        function clearStored() {
+          try {
+            window.localStorage.removeItem(STORAGE_KEY);
+          } catch (error) {
+            /* Ignore unavailable storage. */
+          }
+        }
+
+        function detectLang() {
+          var raw =
+            navigator.language ||
+            (navigator.languages && navigator.languages[0]) ||
+            "zh-CN";
+          var lang = String(raw).toLowerCase();
+          if (lang.indexOf("zh") === 0) {
+            if (lang.indexOf("hant") !== -1 || /-(tw|hk)(-|$)/.test(lang)) {
+              return "zh_TW";
+            }
+            return "zh_CN";
+          }
+          if (lang.indexOf("ja") === 0) return "ja";
+          if (lang.indexOf("en") === 0) return "en";
+          return "zh_CN";
+        }
+
+        function applyLang(lang, followingBrowser) {
+          var dict = I18N[lang] || I18N.zh_CN;
+          document.documentElement.lang = dict.htmlLang;
+          document.title = dict.title;
+          brandName.textContent = dict.brand;
+          content.innerHTML = dict.body;
+
+          switcher.setAttribute("aria-label", dict.switchLabel);
+          autoButton.textContent = dict.autoLabel;
+          autoButton.setAttribute("aria-label", dict.autoLabel);
+          autoButton.setAttribute("aria-pressed", followingBrowser ? "true" : "false");
+
+          for (var i = 0; i < langButtons.length; i += 1) {
+            var button = langButtons[i];
+            var buttonLang = button.getAttribute("data-lang");
+            button.setAttribute("aria-label", dict.langNames[i] || button.textContent);
+            button.setAttribute("aria-pressed", buttonLang === lang ? "true" : "false");
+          }
+        }
+
+        var stored = readStored();
+        var initialLang;
+        var followingBrowser = false;
+
+        if (stored && I18N[stored]) {
+          initialLang = stored;
+        } else if (FORCED_LANG && I18N[FORCED_LANG]) {
+          initialLang = FORCED_LANG;
+        } else {
+          initialLang = detectLang();
+          followingBrowser = true;
+        }
+
+        applyLang(initialLang, followingBrowser);
+
+        for (var i = 0; i < langButtons.length; i += 1) {
+          (function (button) {
+            button.addEventListener("click", function () {
+              var lang = button.getAttribute("data-lang");
+              saveStored(lang);
+              applyLang(lang, false);
+            });
+          })(langButtons[i]);
+        }
+
+        autoButton.addEventListener("click", function () {
+          clearStored();
+          applyLang(detectLang(), true);
+        });
+      })();
+    </script>
+  </body>
+</html>

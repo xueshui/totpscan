@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- SDK 需要向“已固化的 HTTPS 提交地址”发起 POST 请求 -->
+    <uses-permission android:name="android.permission.INTERNET" />
+
+</manifest>

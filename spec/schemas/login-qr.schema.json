@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://totpscan.example/schemas/login-qr.schema.json",
+  "title": "TOTPSCAN 登录二维码载荷 v1",
+  "description": "登录阶段展示的二维码内容。url 仅用于与本地钉住的 dom 做注册域名比对，绝不能作为提交目标；提交路径固定使用绑定时的 path。",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["t", "v", "url", "token", "exp"],
+  "properties": {
+    "t": {
+      "const": "totp-login"
+    },
+    "v": {
+      "const": 1
+    },
+    "url": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 255,
+      "pattern": "^[A-Za-z0-9.-]+$",
+      "description": "站点域名，如 qq.example.com；不带 scheme、路径、查询串、端口与 userinfo"
+    },
+    "token": {
+      "type": "string",
+      "pattern": "^(?:[A-Za-z0-9_-]{16}|[A-Za-z0-9_-]{24})$",
+      "description": "16 或 24 个 base64url 字符的会话标识"
+    },
+    "exp": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "失效时间（Unix 秒），与签发时刻之差建议 ≤60"
+    }
+  }
+}

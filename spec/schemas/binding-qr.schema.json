@@ -1,0 +1,79 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://totpscan.example/schemas/binding-qr.schema.json",
+  "title": "TOTPSCAN 绑定二维码载荷 v1",
+  "description": "绑定阶段展示的二维码内容（UTF-8 紧凑 JSON）。sec 为共享密钥，属于敏感数据；绑定载荷不签名。",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["t", "v", "bid", "iss", "acc", "sec", "alg", "dig", "per", "dom", "path", "iat"],
+  "properties": {
+    "t": {
+      "const": "totp-bind"
+    },
+    "v": {
+      "const": 1
+    },
+    "bid": {
+      "type": "string",
+      "pattern": "^b_[A-Za-z0-9_-]{16,64}$",
+      "description": "绑定标识，不含用户身份信息"
+    },
+    "iss": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 64,
+      "pattern": "^[^\\u0000-\\u001F\\u007F]+$",
+      "description": "签发方展示名（NFC，不含控制字符）"
+    },
+    "acc": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 255,
+      "pattern": "^[^\\u0000-\\u001F\\u007F]+$",
+      "description": "账户标识（NFC，不含控制字符）"
+    },
+    "sec": {
+      "type": "string",
+      "pattern": "^[A-Z2-7]+$",
+      "minLength": 26,
+      "maxLength": 103,
+      "description": "TOTP 共享密钥，Base32 大写、无填充"
+    },
+    "alg": {
+      "type": "string",
+      "enum": ["SHA1", "SHA256", "SHA512"]
+    },
+    "dig": {
+      "type": "integer",
+      "enum": [6, 8]
+    },
+    "per": {
+      "type": "integer",
+      "enum": [30, 60]
+    },
+    "dom": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 255,
+      "pattern": "^[A-Za-z0-9.-]+(:[0-9]{1,5})?$",
+      "description": "站点域名 host[:port]（IDNA A-label 小写，默认端口省略）；客户端钉住其注册域名"
+    },
+    "path": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 2048,
+      "pattern": "^/[^#\\s]*$",
+      "description": "提交路径，含查询串，原样保留；客户端钉住该字符串并用于构造提交地址（scheme + dom + path），不参与登录比对"
+    },
+    "iat": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "签发时间（Unix 秒）"
+    },
+    "exp": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "失效时间（Unix 秒），可选"
+    }
+  }
+}

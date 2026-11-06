@@ -1,0 +1,13 @@
+{
+  "src": [
+    "pages/Index",
+    "pages/Login",
+    "pages/BindScan",
+    "pages/BindConfirm",
+    "pages/AddAccount",
+    "pages/StandardAdd",
+    "pages/AccountDetail",
+    "pages/ExportQr",
+    "pages/Settings"
+  ]
+}

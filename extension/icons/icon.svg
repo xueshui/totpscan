@@ -1,0 +1,42 @@
+<svg width="128" height="128" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="扫码增强认证器图标">
+  <!-- 改色只需修改下面的 accent（主题色）与 accent-light（高光色）。 -->
+  <style>
+    :root { --accent: #2F6FED; --accent-light: #60A5FA; }
+  </style>
+  <defs>
+    <linearGradient id="bg" x1="20" y1="6" x2="108" y2="124" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#1E2942"/>
+      <stop offset="1" stop-color="#090F1C"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0" cy="0" r="1" gradientTransform="translate(46 32) rotate(47) scale(76)" gradientUnits="userSpaceOnUse">
+      <stop stop-color="var(--accent)" stop-opacity="0.16"/>
+      <stop offset="1" stop-color="var(--accent)" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="shield" x1="64" y1="16" x2="64" y2="112" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#1A2A47"/>
+      <stop offset="1" stop-color="#0D1A30"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="128" height="128" rx="28" fill="url(#bg)"/>
+  <rect width="128" height="128" rx="28" fill="url(#glow)"/>
+
+  <path d="M64 16 L100 28 L100 62 C100 86 82 102 64 112 C46 102 28 86 28 62 L28 28 Z"
+        fill="url(#shield)" stroke="var(--accent)" stroke-width="5" stroke-linejoin="round"/>
+
+  <circle cx="64" cy="62" r="27" stroke="#FFFFFF" stroke-opacity="0.14" stroke-width="4.2"/>
+  <path d="M64 35 A27 27 0 1 1 37 62" stroke="#EDF3FC" stroke-width="4.2" stroke-linecap="round"/>
+
+  <g>
+    <rect x="43" y="42" width="10" height="10" fill="none" stroke="#EDF3FC" stroke-width="2.4"/>
+    <rect x="46.3" y="45.3" width="3.4" height="3.4" fill="#EDF3FC"/>
+  </g>
+  <g>
+    <rect x="75" y="42" width="10" height="10" fill="none" stroke="#EDF3FC" stroke-width="2.4"/>
+    <rect x="78.3" y="45.3" width="3.4" height="3.4" fill="#EDF3FC"/>
+  </g>
+  <g>
+    <rect x="43" y="74" width="10" height="10" fill="none" stroke="#EDF3FC" stroke-width="2.4"/>
+    <rect x="46.3" y="77.3" width="3.4" height="3.4" fill="#EDF3FC"/>
+  </g>
+</svg>

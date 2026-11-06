@@ -1,0 +1,14 @@
+{
+  "name": "totpscan-extension",
+  "version": "1.0.3",
+  "private": true,
+  "description": "扫码增强认证器（Chrome / Edge，Manifest V3）",
+  "type": "module",
+  "scripts": {
+    "test": "node tests/selftest.mjs",
+    "icons": "node tools/build-icons.mjs",
+    "pack": "node tools/pack.mjs && node tools/pack.mjs --store",
+    "verify": "node tools/verify-pack.mjs && node tools/verify-pack.mjs --store",
+    "build": "npm run icons && npm run pack && npm run verify"
+  }
+}

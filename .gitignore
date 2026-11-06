@@ -1,0 +1,127 @@
+# ============================================================
+# 仓库根级 .gitignore
+# 源码与文档入库；密钥、本地配置、构建/打包产物、临时目录不入库。
+# ============================================================
+
+# ---------- 系统与编辑器 ----------
+.DS_Store
+Thumbs.db
+desktop.ini
+.idea/
+.vscode/
+*.iml
+*.swp
+*~
+
+# ---------- 密钥与证书 ----------
+*.pem
+*.key
+*.p8
+*.p12
+*.pfx
+*.jks
+*.keystore
+*.mobileprovision
+*.provisionprofile
+*.cer
+keystore.properties
+keystore.properties.*
+!keystore.properties.example
+
+# 扩展固定 ID 的本地密钥（不随源码入库，dev 打包时临时注入）
+extension/keys/
+extension/*.zip
+
+# Android 本地签名材料
+android/keystore/
+android/keystore.properties
+android/keystore.local.properties
+
+# 服务端本地密钥目录
+server/.keys/
+
+# ---------- 环境变量 ----------
+.env
+.env.*
+!.env.example
+
+# ---------- 通用构建 / 打包产物 ----------
+build/
+dist/
+out/
+*.apk
+*.aab
+*.ap_
+*.dex
+*.class
+*.jar
+*.aar
+*.har
+*.hap
+*.ipa
+*.xcarchive
+*.zip
+*.log
+
+# gradle wrapper 必须保留
+!android/gradle/wrapper/gradle-wrapper.jar
+!**/gradle-wrapper.jar
+
+# ---------- Node / 参考服务端 ----------
+node_modules/
+npm-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+coverage/
+*.tsbuildinfo
+server/dist/
+
+# ---------- 浏览器扩展 ----------
+extension/dist/
+extension/node_modules/
+extension/.cache/
+
+# 商店素材：文本清单一律入库，生成出来的 PNG 不入库
+extension/store-v2/**/*.png
+
+# ---------- Android ----------
+android/build/
+android/app/build/
+android/sdk/build/
+android/dist/
+android/.gradle/
+android/.kotlin/
+android/.cxx/
+android/.externalNativeBuild/
+android/captures/
+android/local.properties
+android/.idea/
+*.hprof
+
+# ---------- iOS ----------
+ios/build/
+ios/DerivedData/
+ios/.swiftpm/
+ios/**/xcuserdata/
+ios/**/*.xcscmblueprint
+ios/**/.build/
+
+# ---------- HarmonyOS ----------
+harmony/build/
+harmony/entry/build/
+harmony/totpscan/build/
+harmony/**/.preview/
+harmony/.hvigor/
+harmony/oh_modules/
+harmony/**/oh_modules/
+harmony/local.properties
+harmony/.idea/
+
+# ---------- 临时与工作目录 ----------
+.screenshots/
+.trae/
+.trae-html-share-packages/
+*.tmp
+*.bak
+*.orig
+*.rej
