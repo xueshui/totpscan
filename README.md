@@ -1,5 +1,8 @@
 # totpscan
 
+[![License: Apache-2.0](https://img.shields.io/badge/License-Apache--2.0-blue.svg)](https://github.com/xueshui/totpscan/blob/main/LICENSE)
+[![Issues](https://img.shields.io/badge/issues-GitHub-black.svg)](https://github.com/xueshui/totpscan/issues)
+
 在标准 TOTP（RFC 6238）之上，把「扫码」限定为一次地址核对：绑定阶段把提交地址（域名 + 路径）钉在客户端本地，登录扫码时只有二维码里的地址与本地记录**完全一致**才计算并提交动态码。
 
 > 二维码只用于比对。提交目标永远来自绑定阶段保存在本地的地址，而不是二维码里写的地址。
@@ -37,6 +40,11 @@
 接入文档在 [`docs/`](docs/)：[语言无关接入指南](docs/integration-guide.md)；Go 最小示例见 [`docs/examples/go`](docs/examples/go)。
 
 ## 最小可跑示例
+
+```bash
+git clone https://github.com/xueshui/totpscan.git
+cd totpscan/server
+```
 
 要求 Node.js ≥ 23.6（原生运行 TypeScript）。服务端默认不提供任何管理令牌，必须显式设置 ≥32 字符的 `ADMIN_TOKEN`。
 
@@ -133,4 +141,6 @@ cd harmony
 
 ## 许可证
 
-待定（MIT 或 Apache-2.0），当前 [LICENSE](LICENSE) 仅为占位，未授予任何开源许可；确认后再替换为正式文本。
+[Apache License 2.0](https://github.com/xueshui/totpscan/blob/main/LICENSE) · Copyright 2026 bili觅果呀
+
+问题反馈：[GitHub Issues](https://github.com/xueshui/totpscan/issues)。安全问题请按 [SECURITY.md](SECURITY.md) 走私密渠道。

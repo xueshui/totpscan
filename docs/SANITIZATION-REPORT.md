@@ -104,12 +104,12 @@
 
 ## 8. 仓库与推送
 
-- 已初始化本地仓库（分支 `main`）并完成首次提交，**未配置远端、未推送**；
-- 首次提交使用占位作者身份 `bili觅果呀 <bili@example.com>`（本机未配置 git 身份，且未改动全局配置）。确认正式身份后可执行 `git commit --amend --reset-author`；
-- 托管平台与仓库名尚未确定，请确认后执行：
+- 已初始化本地仓库（分支 `main`），提交作者统一为 `xueshui <132422939+xueshui@users.noreply.github.com>`；
+- **未配置远端、未推送**：本机没有 `gh`，环境变量无 `GITHUB_TOKEN` / `GH_TOKEN`，Windows 凭据管理器中的 GitHub 凭据经 API 验证返回 401（已失效）；
+- 目标仓库地址按账号与项目名确定为 `https://github.com/xueshui/totpscan`，但尚未创建。取得有效 token 后执行：
 
 ```bash
-git remote add origin <你的仓库地址>
+git remote add origin https://github.com/xueshui/totpscan.git
 git push -u origin main
 ```
 
@@ -117,7 +117,7 @@ git push -u origin main
 
 ## 9. 待确认
 
-1. **许可证**：`LICENSE` 目前是占位文本，请在 MIT 与 Apache-2.0 之间确认后再替换为正式全文；
-2. **仓库地址与平台**：未提供，推送命令中的远端保持占位；
-3. **提交作者身份**：当前使用占位邮箱，确认后可 amend；
+1. **许可证**：已确定为 Apache-2.0，`LICENSE` 为正式全文，版权行 `Copyright 2026 bili觅果呀`；
+2. **推送凭据**：需要具备 `repo` 权限的 GitHub PAT（当前凭据已失效），或安装并登录 `gh`；
+3. **仓库创建**：`xueshui/totpscan` 尚未创建，需先建 public 仓库再推送；
 4. **二进制发布**：APK / AAR / 扩展 zip 是否需要挂到 Release（当前全部不入库）。
