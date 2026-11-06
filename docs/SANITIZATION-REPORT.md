@@ -105,19 +105,13 @@
 ## 8. 仓库与推送
 
 - 已初始化本地仓库（分支 `main`），提交作者统一为 `xueshui <132422939+xueshui@users.noreply.github.com>`；
-- 远端已配置为 `origin https://github.com/xueshui/totpscan.git`，**未推送**；
-- 阻塞原因：本机没有 `gh`，环境变量无 `GITHUB_TOKEN` / `GH_TOKEN`，Windows 凭据管理器中的 GitHub 凭据经 API 验证返回 401（已失效）；
-- 目标仓库 `xueshui/totpscan` 尚未创建。恢复凭据后先创建 public 仓库，再执行：
-
-```bash
-git push -u origin main
-```
-
+- 已发布到 GitHub：`https://github.com/xueshui/totpscan`（public），默认分支 `main`，仓库描述与 topics 已设置；
+- 远端地址保持为 `origin https://github.com/xueshui/totpscan.git`，不含任何凭据；认证只在推送进程内以临时 HTTP 授权头完成，token 未写入仓库、Git 配置或提交内容；
+- 远端跟踪文件数与本地一致（295），远端 HEAD 与本地 `main` 一致；
 - 首次提交前已用 `git status --short` 核对：不包含 `keystore`、`*.pem`、`.env`、`build/`、`dist/`、`node_modules/`、`.screenshots/`。
 
 ## 9. 待确认
 
 1. **许可证**：已确定为 Apache-2.0，`LICENSE` 为正式全文，版权行 `Copyright 2026 bili觅果呀`；
-2. **推送凭据**：需要具备 `repo` 权限的 GitHub PAT（当前凭据已失效），或安装并登录 `gh`；
-3. **仓库创建**：`xueshui/totpscan` 尚未创建，需先建 public 仓库再推送；
-4. **二进制发布**：APK / AAR / 扩展 zip 是否需要挂到 Release（当前全部不入库）。
+2. **发布凭据**：首次推送使用一次性 classic PAT（`repo` 权限），无需在本机长期保存；若后续需要自动发布，请改用短期 token 或安装并登录 `gh`；
+3. **二进制发布**：APK / AAR / 扩展 zip 是否需要挂到 Release（当前全部不入库，`dist/` 产物未上传）。
