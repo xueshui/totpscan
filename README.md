@@ -4,7 +4,7 @@
 [![Issues](https://img.shields.io/badge/issues-GitHub-black.svg)](https://github.com/xueshui/totpscan/issues)
 
 <p align="center">
-  <img src="docs/assets/zh/banner.svg" alt="totpscan：扫到的二维码只用来核对地址，动态码只发往绑定时钉住的地址" width="100%">
+  <img src="docs/assets/zh/banner.png" alt="totpscan：扫到的二维码只用来核对地址，动态码只发往绑定时钉住的地址" width="100%">
 </p>
 
 在标准 TOTP（RFC 6238）之上，把「扫码」限定为一次地址核对：绑定阶段把提交地址（域名 + 路径）钉在客户端本地，登录扫码时只有二维码里的地址与本地记录**完全一致**才计算并提交动态码。
@@ -17,21 +17,21 @@
 <summary>English overview · visuals</summary>
 
 <p align="center">
-  <img src="docs/assets/en/banner.svg" alt="totpscan: the scanned QR code is only a check; codes are submitted only to the address pinned at binding" width="100%">
+  <img src="docs/assets/en/banner.png" alt="totpscan: the scanned QR code is only a check; codes are submitted only to the address pinned at binding" width="100%">
 </p>
 
-![Workflow: binding pins dom and path; sign-in posts only to that endpoint](docs/assets/en/workflow.svg)
+![Workflow: binding pins dom and path; sign-in posts only to that endpoint](docs/assets/en/workflow.png)
 
-![Six targets: protocol, reference server, browser extension, Android, iOS and HarmonyOS](docs/assets/en/platforms.svg)
+![Six targets: protocol, reference server, browser extension, Android, iOS and HarmonyOS](docs/assets/en/platforms.png)
 
 <table>
   <tr>
-    <td width="50%"><img src="docs/assets/en/ui-android.svg" alt="Android accounts and scanner mockup"></td>
-    <td width="50%"><img src="docs/assets/en/ui-ios.svg" alt="iOS accounts and scanner mockup"></td>
+    <td width="50%"><img src="docs/assets/en/ui-android.png" alt="Android accounts and scanner mockup"></td>
+    <td width="50%"><img src="docs/assets/en/ui-ios.png" alt="iOS accounts and scanner mockup"></td>
   </tr>
   <tr>
-    <td width="50%"><img src="docs/assets/en/ui-harmony.svg" alt="HarmonyOS accounts and scanner mockup"></td>
-    <td width="50%"><img src="docs/assets/en/ui-extension.svg" alt="Extension popup and on-page scan mockup"></td>
+    <td width="50%"><img src="docs/assets/en/ui-harmony.png" alt="HarmonyOS accounts and scanner mockup"></td>
+    <td width="50%"><img src="docs/assets/en/ui-extension.png" alt="Extension popup and on-page scan mockup"></td>
   </tr>
 </table>
 
@@ -56,11 +56,11 @@
 
 字段、地址规范化规则、错误码与测试用例以 [`spec/`](spec/) 为唯一来源。
 
-![工作流程：绑定阶段钉住 dom 与 path，登录时只向该地址提交动态码](docs/assets/zh/workflow.svg)
+![工作流程：绑定阶段钉住 dom 与 path，登录时只向该地址提交动态码](docs/assets/zh/workflow.png)
 
 ## 六端在哪
 
-![六端能力总览：协议、参考服务端、浏览器扩展、Android、iOS、鸿蒙](docs/assets/zh/platforms.svg)
+![六端能力总览：协议、参考服务端、浏览器扩展、Android、iOS、鸿蒙](docs/assets/zh/platforms.png)
 
 | 端 | 目录 | 形态 | 当前状态 |
 | --- | --- | --- | --- |
@@ -77,12 +77,12 @@
 
 <table>
   <tr>
-    <td width="50%"><img src="docs/assets/zh/ui-android.svg" alt="Android 账户列表与扫码页示意"></td>
-    <td width="50%"><img src="docs/assets/zh/ui-ios.svg" alt="iOS 账户列表与扫码页示意"></td>
+    <td width="50%"><img src="docs/assets/zh/ui-android.png" alt="Android 账户列表与扫码页示意"></td>
+    <td width="50%"><img src="docs/assets/zh/ui-ios.png" alt="iOS 账户列表与扫码页示意"></td>
   </tr>
   <tr>
-    <td width="50%"><img src="docs/assets/zh/ui-harmony.svg" alt="鸿蒙账户列表与扫码页示意"></td>
-    <td width="50%"><img src="docs/assets/zh/ui-extension.svg" alt="浏览器扩展弹窗与页内扫码示意"></td>
+    <td width="50%"><img src="docs/assets/zh/ui-harmony.png" alt="鸿蒙账户列表与扫码页示意"></td>
+    <td width="50%"><img src="docs/assets/zh/ui-extension.png" alt="浏览器扩展弹窗与页内扫码示意"></td>
   </tr>
 </table>
 
