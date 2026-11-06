@@ -105,11 +105,11 @@
 ## 8. 仓库与推送
 
 - 已初始化本地仓库（分支 `main`），提交作者统一为 `xueshui <132422939+xueshui@users.noreply.github.com>`；
-- **未配置远端、未推送**：本机没有 `gh`，环境变量无 `GITHUB_TOKEN` / `GH_TOKEN`，Windows 凭据管理器中的 GitHub 凭据经 API 验证返回 401（已失效）；
-- 目标仓库地址按账号与项目名确定为 `https://github.com/xueshui/totpscan`，但尚未创建。取得有效 token 后执行：
+- 远端已配置为 `origin https://github.com/xueshui/totpscan.git`，**未推送**；
+- 阻塞原因：本机没有 `gh`，环境变量无 `GITHUB_TOKEN` / `GH_TOKEN`，Windows 凭据管理器中的 GitHub 凭据经 API 验证返回 401（已失效）；
+- 目标仓库 `xueshui/totpscan` 尚未创建。恢复凭据后先创建 public 仓库，再执行：
 
 ```bash
-git remote add origin https://github.com/xueshui/totpscan.git
 git push -u origin main
 ```
 
